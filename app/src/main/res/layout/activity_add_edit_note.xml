@@ -1,54 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activities.AddEditNoteActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black_shade_1">
+        tools:context=".activities.AddEditNoteActivity">
 
-        <!--edit text for note title-->
-        <EditText
-            android:id="@+id/idEdtNoteName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:hint="Enter Note Title"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white" />
-
-        <!--edit text for note description-->
-        <EditText
-            android:id="@+id/idEdtNoteDesc"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/idBtn"
-            android:layout_below="@id/idEdtNoteName"
-            android:layout_margin="10dp"
-            android:background="@color/black_shade_1"
-            android:gravity="start|top"
-            android:hint="Enter your Note Details"
-            android:inputType="textMultiLine"
-            android:singleLine="false"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white" />
+            android:background="@color/black_shade_1">
 
-        <!--button for saving and updating a note-->
-        <Button
-            android:id="@+id/idBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_margin="20dp"
-            android:background="@drawable/custom_button_back"
-            android:text="Button"
-            android:textAllCaps="false"
-            android:textColor="@color/white" />
+            <!--edit text for note title-->
+            <EditText
+                android:id="@+id/edtNoteName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:hint="Enter Note Title"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white" />
 
-    </RelativeLayout>
+            <!--edit text for note description-->
+            <EditText
+                android:id="@+id/edNoteDesc"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@id/saveBtn"
+                android:layout_below="@id/edtNoteName"
+                android:layout_margin="10dp"
+                android:background="@color/black_shade_1"
+                android:gravity="start|top"
+                android:hint="Enter your Note Details"
+                android:inputType="textMultiLine"
+                android:singleLine="false"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <!--button for saving and updating a note-->
+            <Button
+                android:id="@+id/saveBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="20dp"
+                android:background="@drawable/custom_button_back"
+                android:text="Button"
+                android:textAllCaps="false"
+                android:textColor="@color/white" />
+
+        </RelativeLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

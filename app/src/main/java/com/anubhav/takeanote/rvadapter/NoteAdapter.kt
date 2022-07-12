@@ -2,57 +2,55 @@ package com.anubhav.takeanote.rvadapter
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.anubhav.takeanote.R
+import com.anubhav.takeanote.BR
 import com.anubhav.takeanote.database.model.Note
 
-class NoteAdapter(private val context: Context, private val noteItemClickInterface: NoteItemClickInterface) :
-    ListAdapter<Note, NoteAdapter.ViewHolder>(NoteDiffUtil()) {
+class NoteAdapter(
+    private val context: Context,
+    private val noteItemClickInterface: NoteItemClickInterface
+) :
+    ListAdapter<Note, BindViewHolder>(NoteDiffUtil()) {
 
-    // on below line we are creating a view holder class.
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // on below line we are creating an initializing all our
-        // variables which we have added in layout file.
-        val noteTV = itemView.findViewById<TextView>(R.id.idTVNote)
-        val dateTV = itemView.findViewById<TextView>(R.id.idTVDate)
-        val deleteIV = itemView.findViewById<ImageView>(R.id.idIVDelete)
-    }
+    private val viewTypeToLayoutId: MutableMap<Int, Int> = mutableMapOf()
 
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        // inflating our layout file for each item of recycler view.
-        val itemView = LayoutInflater.from(parent.context).inflate(
-            R.layout.note_rv_item,
-            parent, false
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindViewHolder {
+        val binding: ViewDataBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(parent.context),
+            viewTypeToLayoutId[viewType] ?: 0,
+            parent,
+            false
         )
-        return ViewHolder(itemView)
+        return BindViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: BindViewHolder, position: Int) {
+        holder.bind(getItem(position), noteItemClickInterface)
+    }
 
-        holder.noteTV.text = getItem(position).noteTitle
-        holder.dateTV.text = "Last Updated : " + getItem(position).timeStamp
-
-        holder.deleteIV.setOnClickListener {
-            noteItemClickInterface.onNoteDeleteClick(getItem(position))
+    override fun getItemViewType(position: Int): Int {
+        val item = getItem(position)
+        if (!viewTypeToLayoutId.containsKey(item.viewType)) {
+            viewTypeToLayoutId[item.viewType] = item.layoutId
         }
-
-        holder.itemView.setOnClickListener {
-            noteItemClickInterface.onNoteClick(getItem(position))
-        }
+        return item.viewType
     }
 
 }
 
-interface NoteItemClickInterface {
-    fun onNoteClick(note: Note);
-    fun onNoteDeleteClick(note: Note)
+class BindViewHolder(private val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
+    // on below line we are creating an initializing all our
+    // variables which we have added in layout file.
+    fun bind(note: Note, noteItemClickInterface: NoteItemClickInterface) {
+        binding.setVariable(BR.note, note)
+        binding.setVariable(BR.onNoteItemClick, noteItemClickInterface)
+    }
+
 }
 
 class NoteDiffUtil : DiffUtil.ItemCallback<Note>() {
@@ -65,4 +63,9 @@ class NoteDiffUtil : DiffUtil.ItemCallback<Note>() {
         return areItemsTheSame(oldItem, newItem)
     }
 
+}
+
+interface NoteItemClickInterface {
+    fun onNoteClick(note: Note);
+    fun onNoteDeleteClick(note: Note)
 }

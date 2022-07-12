@@ -4,45 +4,37 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import androidx.lifecycle.LiveData
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.anubhav.takeanote.R
 import com.anubhav.takeanote.database.model.Note
+import com.anubhav.takeanote.databinding.ActivityMainBinding
 import com.anubhav.takeanote.rvadapter.NoteAdapter
 import com.anubhav.takeanote.rvadapter.NoteItemClickInterface
 import com.anubhav.takeanote.viewmodel.NoteViewModal
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import java.util.Observer
 
 class MainActivity : AppCompatActivity(), NoteItemClickInterface {
 
     // on below line we are creating a variable
     // for our recycler view, exit text, button and viewmodel.
     lateinit var viewModal: NoteViewModal
-    lateinit var notesRV: RecyclerView
-    lateinit var addFAB: FloatingActionButton
+    lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        // on below line we are initializing
-        // all our variables.
-        notesRV = findViewById(R.id.notesRV)
-        addFAB = findViewById(R.id.idFAB)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         // on below line we are setting layout
         // manager to our recycler view.
-        notesRV.layoutManager = LinearLayoutManager(this)
+        binding.notesRV.layoutManager = LinearLayoutManager(this)
 
         // on below line we are initializing our adapter class.
         val noteRVAdapter = NoteAdapter(this, this)
 
         // on below line we are setting
         // adapter to our recycler view.
-        notesRV.adapter = noteRVAdapter
+        binding.notesRV.adapter = noteRVAdapter
 
         // on below line we are
         // initializing our view modal.
@@ -60,10 +52,9 @@ class MainActivity : AppCompatActivity(), NoteItemClickInterface {
             }
         }
 
-        addFAB.setOnClickListener {
+        binding.addFab.setOnClickListener {
             val intent = Intent(this@MainActivity, AddEditNoteActivity::class.java)
             startActivity(intent)
-            finish()
         }
     }
 
@@ -73,7 +64,6 @@ class MainActivity : AppCompatActivity(), NoteItemClickInterface {
         intent.putExtra("noteType", "Edit")
         intent.putExtra("noteData", note)
         startActivity(intent)
-        finish()
     }
 
     override fun onNoteDeleteClick(note: Note) {
