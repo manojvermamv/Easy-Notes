@@ -3,37 +3,110 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <data>
+
+        <import type="android.view.View" />
+
+    </data>
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activities.MainActivity">
+        android:fitsSystemWindows="false"
+        tools:openDrawer="start">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/black_shade_1">
+            android:layout_height="match_parent">
 
-            <!--recycler view for displaying all notes-->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/notesRV"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_lay_actionbar"
+                style="@style/CardViewBottomCornersStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="5dp">
+
+                <RelativeLayout
+                    android:id="@+id/lay_top"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/actionbar_height"
+                    android:background="@color/backcoloractionbar"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/img_menu"
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_margin="7dp"
+                        android:background="?attr/actionBarItemBackground"
+                        android:gravity="center_vertical"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_menu"
+                        app:tint="@color/actionbarimagetintcolor" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_toStartOf="@+id/img_settings"
+                        android:layout_toEndOf="@+id/img_menu"
+                        android:gravity="center">
+
+                        <!-- app icon -> https://www.flaticon.com/premium-icon/sticky-note_5942791?related_id=5942791&origin=search -->
+                        <!-- tab icon notes -> https://www.flaticon.com/free-icon/note_7965502 -->
+                        <!-- tab icon tasks -> https://www.flaticon.com/free-icon/notebook_7941294 -->
+                        <com.google.android.material.tabs.TabLayout
+                            android:id="@+id/tab_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:tabGravity="center"
+                            app:tabIconTint="@drawable/selector_tab_icontint"
+                            app:tabIndicator="@null"
+                            app:tabIndicatorColor="@color/tabindicatorcolor"
+                            app:tabSelectedTextColor="@color/tabtextcolorselected"
+                            app:tabTextColor="@color/tabtextcolor" />
+
+                    </RelativeLayout>
+
+                    <ImageView
+                        android:id="@+id/img_settings"
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_margin="7dp"
+                        android:background="?attr/actionBarItemBackground"
+                        android:gravity="center_vertical"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_settings"
+                        app:tint="@color/actionbarimagetintcolor" />
+
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.anubhav.commonutility.views.CustomViewPager
+                android:id="@+id/viewPager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="5dp"
-                tools:listitem="@layout/note_rv_item" />
-
-            <!--fab for adding a new note-->
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/addFab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_margin="20dp"
-                android:src="@android:drawable/ic_input_add"
-                app:backgroundTint="@color/black_shade_2"
-                app:tint="@color/white" />
+                android:layout_below="@+id/card_lay_actionbar" />
 
         </RelativeLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/drawer_back_lightcolor"
+            android:fitsSystemWindows="true"
+            android:focusableInTouchMode="true"
+            android:visibility="gone"
+            app:headerLayout="@layout/nav_drawer_header"
+            app:itemTextAppearance="@style/DrawerItemTextAppearance"
+            app:itemTextColor="@color/drawer_fontcolortv"
+            app:menu="@menu/main_drawer" />
+
+    </androidx.drawerlayout.widget.DrawerLayout>
+
 </layout>

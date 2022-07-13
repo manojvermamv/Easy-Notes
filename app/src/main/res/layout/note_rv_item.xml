@@ -10,7 +10,7 @@
 
         <variable
             name="onNoteItemClick"
-            type="com.anubhav.takeanote.rvadapter.NoteItemClickInterface" />
+            type="com.anubhav.takeanote.adapters.NoteItemClickInterface" />
 
     </data>
 
@@ -19,8 +19,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="7dp"
         android:onClick="@{(view) -> onNoteItemClick.onNoteClick(note)}"
-        app:cardBackgroundColor="@color/black_shade_2"
-        app:cardCornerRadius="7dp"
+        app:cardBackgroundColor="@color/cardbackcolor"
+        app:cardCornerRadius="10dp"
         app:cardElevation="3dp">
 
         <RelativeLayout
@@ -37,7 +37,7 @@
                 android:layout_toStartOf="@id/idIVDelete"
                 android:padding="4dp"
                 android:text="@{note.noteTitle}"
-                android:textColor="@color/white"
+                android:textColor="@color/fontcolortextview"
                 android:textSize="18sp" />
 
             <!--text view for displaying our last updated text-->
@@ -50,7 +50,7 @@
                 android:layout_toStartOf="@id/idIVDelete"
                 android:padding="4dp"
                 android:text='@{"Last Updated : " + note.timeStamp}'
-                android:textColor="@color/white"
+                android:textColor="@color/fontcolortextview"
                 android:textSize="13sp" />
 
             <!--imageview for displaying delete icon-->
@@ -63,8 +63,7 @@
                 android:layout_margin="3dp"
                 android:onClick="@{(view) -> onNoteItemClick.onNoteDeleteClick(note)}"
                 android:padding="3dp"
-                android:src="@android:drawable/ic_menu_delete"
-                app:tint="@color/white" />
+                android:src="@android:drawable/ic_menu_delete" />
 
         </RelativeLayout>
 

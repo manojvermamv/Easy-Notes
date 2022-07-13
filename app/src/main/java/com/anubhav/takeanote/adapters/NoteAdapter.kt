@@ -1,4 +1,4 @@
-package com.anubhav.takeanote.rvadapter
+package com.anubhav.takeanote.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -21,7 +21,7 @@ class NoteAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindViewHolder {
         val binding: ViewDataBinding = DataBindingUtil.inflate(
-            LayoutInflater.from(parent.context),
+            LayoutInflater.from(context),
             viewTypeToLayoutId[viewType] ?: 0,
             parent,
             false

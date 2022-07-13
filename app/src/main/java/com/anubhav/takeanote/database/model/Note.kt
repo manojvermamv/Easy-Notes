@@ -21,6 +21,5 @@ class Note(
     var taskId = 0
 
     override var layoutId: Int = R.layout.note_rv_item
-    override var viewType: Int = R.layout.note_rv_item
 
 }
