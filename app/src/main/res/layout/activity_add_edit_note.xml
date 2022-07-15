@@ -17,41 +17,51 @@
                 android:id="@+id/lay_actionbar"
                 layout="@layout/include_actionbar_normal" />
 
-            <!--edit text for note title-->
-            <EditText
-                android:id="@+id/edtNoteName"
-                style="@style/Custom.EditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/lay_actionbar"
-                android:layout_margin="10dp"
-                android:hint="Enter Note Title" />
-
-            <!--edit text for note description-->
-            <EditText
-                android:id="@+id/edNoteDesc"
-                style="@style/Custom.EditText"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@id/saveBtn"
-                android:layout_below="@id/edtNoteName"
-                android:layout_margin="10dp"
-                android:gravity="start|top"
-                android:hint="Enter your Note Details"
-                android:inputType="textMultiLine"
-                android:singleLine="false" />
+                android:layout_below="@+id/lay_actionbar"
+                android:padding="10dp">
 
-            <!--button for saving and updating a note-->
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/saveBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_margin="20dp"
-                android:background="@drawable/custom_button_back"
-                android:text="Button"
-                android:textAllCaps="false"
-                android:textColor="@color/fontcolortextview" />
+                <!--edit text for note title-->
+                <EditText
+                    android:id="@+id/edtNoteName"
+                    style="@style/Custom.EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:layout_margin="10dp"
+                    android:textSize="24sp"
+                    android:hint="Title" />
+
+                <!--edit text for note description-->
+                <EditText
+                    android:id="@+id/edNoteDesc"
+                    style="@style/Custom.EditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_above="@id/saveBtn"
+                    android:layout_below="@id/edtNoteName"
+                    android:background="@android:color/transparent"
+                    android:layout_margin="10dp"
+                    android:gravity="start|top"
+                    android:hint="Start typing"
+                    android:inputType="textMultiLine"
+                    android:singleLine="false" />
+
+                <!--button for saving and updating a note-->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/saveBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_margin="20dp"
+                    android:background="@drawable/custom_button_back"
+                    android:text="Button"
+                    android:textAllCaps="false"
+                    android:textColor="@color/fontcolortextview" />
+
+            </RelativeLayout>
 
         </RelativeLayout>
 

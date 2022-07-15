@@ -41,7 +41,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center_vertical"
-                android:padding="3dp"
+                android:padding="4dp"
                 android:src="@drawable/ic_back_arrow_round_24"
                 app:tint="@color/actionbarimagetintcolor" />
 
@@ -67,35 +67,46 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:letterSpacing="0.1"
                     android:text='@{actionBarTitle, default="@string/app_name"}'
                     android:textColor="@color/fontcoloractionbar"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textSize="18sp" />
 
             </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/lay_actionmenu"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_alignParentEnd="true">
+                android:layout_alignParentEnd="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="@{menuVisible ? View.VISIBLE : View.GONE, default=gone}">
 
                 <ImageView
-                    android:id="@+id/btn_menu"
+                    android:id="@+id/btn_share"
                     android:layout_width="37dp"
                     android:layout_height="37dp"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="7dp"
+                    android:layout_margin="5dp"
                     android:background="?actionBarItemBackground"
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="5dp"
-                    android:src="@drawable/ic_round_more_vert_24"
-                    android:visibility="@{menuVisible ? View.VISIBLE : View.GONE, default=gone}"
+                    android:src="@drawable/ic_round_ios_share_24"
                     app:tint="@color/actionbarimagetintcolor" />
 
-            </RelativeLayout>
+                <ImageView
+                    android:id="@+id/btn_delete"
+                    android:layout_width="37dp"
+                    android:layout_height="37dp"
+                    android:layout_margin="5dp"
+                    android:background="?actionBarItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_round_delete_outline_24"
+                    app:tint="@color/actionbarimagetintcolor" />
+
+            </LinearLayout>
 
         </RelativeLayout>
 

@@ -102,7 +102,7 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
     override fun onNoteClick(note: Note) {
         // opening a new intent and passing a data to it.
         val intent = Intent(requireContext(), AddEditNoteActivity::class.java)
-        intent.putExtra("noteType", "Edit")
+        intent.putExtra("updateNote", true)
         intent.putExtra("noteData", note)
         startActivity(intent)
     }

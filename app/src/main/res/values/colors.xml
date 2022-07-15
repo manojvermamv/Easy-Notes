@@ -83,8 +83,8 @@
 
     <color name="ed_highlight_color">#1F211663</color>
     <color name="ed_font_color">@color/black</color>
-    <color name="ed_font_color_hint">@color/grey_500</color>
-    <color name="ed_drawable_tint">@color/grey_500</color>
+    <color name="ed_font_color_hint">@color/grey_300</color>
+    <color name="ed_drawable_tint">@color/grey_300</color>
 
     <color name="buttonfontcolor_enabled">#000000</color>
     <color name="buttonfontcolor_disabled">#000000</color>

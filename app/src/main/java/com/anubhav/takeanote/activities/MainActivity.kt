@@ -6,10 +6,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.viewpager.widget.ViewPager
 import com.anubhav.commonutility.customfont.FontUtils
 import com.anubhav.takeanote.R
 import com.anubhav.takeanote.adapters.MainActionsAdapter
@@ -58,6 +60,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         updateManager.start()
 
         // setup viewPager with tab layout
+        initViewPager()
+    }
+
+    private fun initViewPager() {
         val adapter = MainActionsAdapter(this, supportFragmentManager)
         binding.viewPager.setSwipeable(false)
         binding.viewPager.adapter = adapter
@@ -67,6 +73,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             view.findViewById<ImageView>(R.id.icon).setImageResource(tabIconRes[i]);
             val tab = binding.tabLayout.getTabAt(i) as TabLayout.Tab
             tab.customView = view;
+            if (i == 1) tab.view.isEnabled = false
         }
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -86,7 +93,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             override fun onTabReselected(tab: TabLayout.Tab?) {
             }
-
         })
 
         binding.viewPager.currentItem = 0

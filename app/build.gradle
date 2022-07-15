@@ -31,11 +31,9 @@ android {
     }
 
     buildFeatures {
+        dataBinding true
         viewBinding true
         buildConfig true
-    }
-    dataBinding {
-        enabled = true
     }
     lintOptions {
         checkReleaseBuilds false
@@ -83,6 +81,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.coroutines"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutines"
+
+    // data binding
+    kapt 'androidx.databinding:databinding-compiler-common:3.4.0'
 
     // UI
     implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintLayoutVersion"

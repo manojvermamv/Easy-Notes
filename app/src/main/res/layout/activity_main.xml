@@ -4,16 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-        <import type="android.view.View" />
-
     </data>
 
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="false"
         tools:openDrawer="start">
 
         <RelativeLayout
@@ -42,7 +38,7 @@
                         android:layout_margin="7dp"
                         android:background="?attr/actionBarItemBackground"
                         android:gravity="center_vertical"
-                        android:padding="5dp"
+                        android:padding="4dp"
                         android:src="@drawable/ic_menu"
                         app:tint="@color/actionbarimagetintcolor" />
 
@@ -99,14 +95,11 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:background="@color/drawer_back_lightcolor"
-            android:fitsSystemWindows="true"
             android:focusableInTouchMode="true"
-            android:visibility="gone"
             app:headerLayout="@layout/nav_drawer_header"
             app:itemTextAppearance="@style/DrawerItemTextAppearance"
             app:itemTextColor="@color/drawer_fontcolortv"
             app:menu="@menu/main_drawer" />
 
     </androidx.drawerlayout.widget.DrawerLayout>
-
 </layout>
