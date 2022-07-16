@@ -2,4 +2,25 @@
     <string name="app_name">Take A Note</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="take_pic_btn_label">Take photos</string>
+    <string name="front_picture">Front Camera Picture</string>
+    <string name="back_picture">Back Camera Picture</string>
+    <string name="start_recording">Start Recording</string>
+    <string name="stop_recording">Stop Recording</string>
+    <string name="front_camera">Front Camera</string>
+    <string name="back_camera">Back Camera</string>
+    <string name="no_camera">There is no camera on this device</string>
+    <string name="search">Search</string>
+    <string name="no_results">No results</string>
+
+    <string name="no_internet_title">No Network Connection</string>
+    <string name="internet_title">No Network Connection</string>
+    <string name="internet_msg">No Network Connection. Connect to the internet and try again</string>
+    <string name="date_error">Error in getting daya</string>
+    <string name="internet_postivetext">Check Again</string>
+    <string name="internet_negativetext">Cancel</string>
+    <string name="nonterworkconn">No network connection. Connect to the \ninternet and try again</string>
+    <string name="nointernet">No Internet connection</string>
+
 </resources>

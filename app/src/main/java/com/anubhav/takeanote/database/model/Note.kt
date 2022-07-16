@@ -11,7 +11,7 @@ import java.io.Serializable
 class Note(
     @ColumnInfo(name = "title") var noteTitle: String,
     @ColumnInfo(name = "description") var noteDescription: String,
-    @ColumnInfo(name = "timestamp") var timeStamp: String
+    @ColumnInfo(name = "timeStamp") var timeStamp: String
 ) : ItemViewModel, Serializable {
 
     // on below line we are specifying our key and
@@ -21,5 +21,10 @@ class Note(
     var taskId = 0
 
     override var layoutId: Int = R.layout.note_rv_item
+    override var viewType: Int = R.layout.note_rv_item
 
+}
+
+fun getEmptyItem(): Note {
+    return Note("", "", "")
 }

@@ -13,7 +13,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="android:windowBackground">@color/app_main_background_color</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -187,6 +187,7 @@
 
     <style name="CardViewBottomCornersStyle" parent="@style/Widget.MaterialComponents.CardView">
         <item name="shapeAppearanceOverlay">@style/CardShape_bottom_custom_corners</item>
+        <item name="cardElevation">2dp</item>
     </style>
 
     <style name="CardShape_top_custom_corners" parent="">
@@ -201,8 +202,8 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">0dp</item>
         <item name="cornerSizeTopLeft">0dp</item>
-        <item name="cornerSizeBottomRight">12dp</item>
-        <item name="cornerSizeBottomLeft">12dp</item>
+        <item name="cornerSizeBottomRight">10dp</item>
+        <item name="cornerSizeBottomLeft">10dp</item>
     </style>
 
 

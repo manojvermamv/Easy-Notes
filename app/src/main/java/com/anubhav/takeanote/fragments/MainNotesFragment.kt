@@ -2,7 +2,6 @@ package com.anubhav.takeanote.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,15 +9,18 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.anubhav.commonutility.SwipeDeleteHelper
 import com.anubhav.commonutility.customfont.FontUtils
 import com.anubhav.takeanote.R
 import com.anubhav.takeanote.activities.AddEditNoteActivity
-import com.anubhav.takeanote.activities.MainActivity
 import com.anubhav.takeanote.adapters.NoteAdapter
 import com.anubhav.takeanote.adapters.NoteItemClickInterface
 import com.anubhav.takeanote.database.model.Note
 import com.anubhav.takeanote.databinding.FragMainNotesBinding
+import com.anubhav.takeanote.interfaces.RvItemDeleteListener
 import com.anubhav.takeanote.viewmodel.NoteViewModal
 
 
@@ -30,8 +32,9 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
     lateinit var binding: FragMainNotesBinding
 
     // on below line we are creating a variable
-    // for our recycler view, exit text, button and viewmodel.
-    lateinit var viewModal: NoteViewModal
+    // for our recycler view, exit text, button and viewModel.
+    private lateinit var viewModal: NoteViewModal
+    private lateinit var noteRVAdapter: NoteAdapter
 
     companion object {
         @JvmStatic
@@ -62,6 +65,12 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         super.onViewCreated(view, savedInstanceState)
         FontUtils.setFont(requireContext(), binding.root as ViewGroup)
 
+        // on below line we are initializing our view modal.
+        viewModal = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+        ).get(NoteViewModal::class.java)
+
         binding.addFab.setOnClickListener {
             val intent = Intent(requireContext(), AddEditNoteActivity::class.java)
             startActivity(intent)
@@ -76,18 +85,11 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         binding.notesRV.layoutManager = LinearLayoutManager(requireContext())
 
         // on below line we are initializing our adapter class.
-        val noteRVAdapter = NoteAdapter(requireContext(), this)
+        noteRVAdapter = NoteAdapter(requireContext(), this)
 
         // on below line we are setting
         // adapter to our recycler view.
         binding.notesRV.adapter = noteRVAdapter
-
-        // on below line we are
-        // initializing our view modal.
-        viewModal = ViewModelProvider(
-            requireActivity(),
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        ).get(NoteViewModal::class.java)
 
         // on below line we are calling all notes method
         // from our view modal class to observer the changes on list.
@@ -95,8 +97,19 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
             list?.let {
                 // on below line we are updating our list.
                 noteRVAdapter.submitList(it)
+                binding.layNotFound.rootView.visibility =
+                    if (it.isEmpty()) View.VISIBLE else View.GONE
             }
         }
+
+        val itemTouchHelper =
+            ItemTouchHelper(SwipeDeleteHelper(itemDeleteListener, requireContext()))
+        itemTouchHelper.attachToRecyclerView(binding.notesRV)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModal.getAllNotes()
     }
 
     override fun onNoteClick(note: Note) {
@@ -109,7 +122,15 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
 
     override fun onNoteDeleteClick(note: Note) {
         viewModal.deleteNote(note)
-        Toast.makeText(requireContext(), "${note.noteTitle} Deleted", Toast.LENGTH_LONG).show()
+        Toast.makeText(requireContext(), "${note.noteTitle} Deleted", Toast.LENGTH_SHORT).show()
+    }
+
+    var itemDeleteListener: RvItemDeleteListener = object : RvItemDeleteListener {
+        override fun onItemDelete(position: Int) {
+            val note: Note = noteRVAdapter.currentList[position]
+            viewModal.deleteNote(note)
+            Toast.makeText(requireContext(), "${note.noteTitle} Deleted", Toast.LENGTH_SHORT).show()
+        }
     }
 
 }

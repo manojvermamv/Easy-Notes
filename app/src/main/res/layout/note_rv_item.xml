@@ -4,6 +4,14 @@
 
     <data>
 
+        <import type="android.view.View" />
+
+        <import type="android.text.TextUtils" />
+
+        <variable
+            name="displayTime"
+            type="String" />
+
         <variable
             name="note"
             type="com.anubhav.takeanote.database.model.Note" />
@@ -14,59 +22,71 @@
 
     </data>
 
-    <androidx.cardview.widget.CardView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="7dp"
-        android:onClick="@{(view) -> onNoteItemClick.onNoteClick(note)}"
-        app:cardBackgroundColor="@color/cardbackcolor"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="3dp">
+        android:layout_margin="6dp"
+        android:background="@drawable/back_note_item"
+        android:onClick="@{(view) -> onNoteItemClick.onNoteClick(note)}">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp">
+            android:layout_margin="6dp">
 
             <!--text view for displaying our note text-->
             <TextView
                 android:id="@+id/idTVNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="3dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
                 android:layout_toStartOf="@id/idIVDelete"
-                android:padding="4dp"
-                android:text="@{note.noteTitle}"
+                android:padding="3dp"
+                android:text="@{TextUtils.isEmpty(note.noteTitle)? note.noteDescription : note.noteTitle}"
                 android:textColor="@color/fontcolortextview"
                 android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/idTVNoteDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/idTVNote"
+                android:layout_toStartOf="@id/idIVDelete"
+                android:maxLines="1"
+                android:padding="3dp"
+                android:text="@{note.noteDescription}"
+                android:textColor="@color/grey_500"
+                android:textSize="15sp"
+                android:visibility="@{TextUtils.isEmpty(note.noteTitle)? View.GONE : View.VISIBLE, default=visible}" />
 
             <!--text view for displaying our last updated text-->
             <TextView
                 android:id="@+id/idTVDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/idTVNote"
-                android:layout_margin="3dp"
+                android:layout_below="@id/idTVNoteDesc"
                 android:layout_toStartOf="@id/idIVDelete"
-                android:padding="4dp"
-                android:text='@{"Last Updated : " + note.timeStamp}'
-                android:textColor="@color/fontcolortextview"
-                android:textSize="13sp" />
+                android:padding="3dp"
+                android:text="@{displayTime}"
+                android:textColor="@color/grey_600"
+                android:textSize="12sp" />
 
             <!--imageview for displaying delete icon-->
             <ImageView
                 android:id="@+id/idIVDelete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_margin="3dp"
                 android:onClick="@{(view) -> onNoteItemClick.onNoteDeleteClick(note)}"
-                android:padding="3dp"
-                android:src="@android:drawable/ic_menu_delete" />
+                android:padding="4dp"
+                android:src="@drawable/ic_round_delete_outline_24"
+                android:visibility="gone"
+                app:tint="@color/colorPrimary" />
 
         </RelativeLayout>
 
-    </androidx.cardview.widget.CardView>
+    </FrameLayout>
 
 </layout>

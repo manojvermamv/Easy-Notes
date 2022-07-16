@@ -1,20 +1,68 @@
 package com.anubhav.takeanote.utils;
 
+import android.text.format.DateUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class DateTimeUtils {
 
     private static final String TAG = DateTimeUtils.class.getSimpleName();
 
     public static String getCurrentTime() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM, yyyy - hh:mm:ss aa", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("LLLL dd, yyyy  hh:mm:ss aaa", Locale.getDefault());
         return sdf.format(new Date());
+    }
+
+    public static String getDisplayTime(String strTime) {
+        SimpleDateFormat sourceFormat = new SimpleDateFormat("LLLL dd, yyyy  hh:mm:ss aaa", Locale.getDefault());
+        try {
+            // get a date to represent "today"
+            Date today = Calendar.getInstance().getTime();
+            Date convertedDate = sourceFormat.parse(strTime);
+
+            if (isSameDay(convertedDate, today)) {
+                SimpleDateFormat destFormatToday = new SimpleDateFormat("hh:mm aaa", Locale.getDefault());
+                return "Today " + destFormatToday.format(convertedDate);
+            } else {
+                SimpleDateFormat destFormat = new SimpleDateFormat("LLLL dd, yyyy  hh:mm aaa", Locale.getDefault());
+                return destFormat.format(convertedDate);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return strTime;
+        }
+    }
+
+    public static String getFormattedTime(String strTime) {
+        SimpleDateFormat sourceFormat = new SimpleDateFormat("LLLL dd, yyyy - hh:mm:ss aaa", Locale.getDefault());
+        SimpleDateFormat destFormat = new SimpleDateFormat("LLLL dd, yyyy - hh:mm aaa", Locale.getDefault());
+        try {
+            //sourceFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date convertedDate = sourceFormat.parse(strTime);
+            return destFormat.format(convertedDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return strTime;
+        }
+    }
+
+    public static boolean isSameDay(Date date1, Date date2) {
+        int offset = TimeZone.getDefault().getRawOffset();
+        try {
+            long MILLIS_PER_DAY = DateUtils.DAY_IN_MILLIS;
+            long julianDayNumber1 = (date1.getTime() + offset) / MILLIS_PER_DAY;
+            long julianDayNumber2 = (date2.getTime() + offset) / MILLIS_PER_DAY;
+            return julianDayNumber1 == julianDayNumber2;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public static boolean isTimeBetweenTwoTime(String startTime, String endTime, String time) throws ParseException {

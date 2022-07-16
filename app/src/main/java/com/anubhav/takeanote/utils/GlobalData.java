@@ -471,6 +471,16 @@ public class GlobalData {
      *
      * @param activity  activity reference required.
      * @param color     background color resources for statusBar background.
+     */
+    public static void setStatusBarBackgroundColor(Activity activity, @ColorRes int color) {
+        setStatusBarBackgroundColor(activity, color, false);
+    }
+
+    /**
+     * Sets the status bar background color.
+     *
+     * @param activity  activity reference required.
+     * @param color     background color resources for statusBar background.
      * @param lightText set true to show light text color in status bar.
      */
     public static void setStatusBarBackgroundColor(Activity activity, @ColorRes int color, boolean lightText) {

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="colorAccent">@color/amber_400</color>
+    <color name="colorAccent">#fedb41</color>
     <color name="colorPrimary">#4285F4</color>
-    <color name="colorPrimaryDark">#eaeceb</color>
-    <color name="colorPrimaryLight">#FFFFFF</color>
+    <color name="colorPrimaryDark">@color/grey_3</color>
+    <color name="colorPrimaryLight">@color/grey_3</color>
 
     <color name="colorAccentDark">#ffc15f</color>
     <color name="colorAccentDark25">#40FFC15F</color>
     <color name="colorAccentDark50">#80FFC15F</color>
     <color name="colorAccentDark70">#BFFFC15F</color>
 
-    <color name="app_main_background_color">#ffffff</color>
+    <color name="app_main_background_color">@color/grey_3</color>
     <color name="app_main_content_color">@color/white</color>
     <color name="app_main_indicator_color">#ffc62828</color>
-    <color name="app_main_footer_color">@color/amber_400</color>
-    <color name="dialog_header_color">@color/amber_400</color>
+    <color name="app_main_footer_color">#fedb41</color>
+    <color name="dialog_header_color">#fedb41</color>
 
     <color name="app_main_title_color">#ff000000</color>
     <color name="app_main_sub_title_color">#ff999999</color>
@@ -36,7 +36,6 @@
     <color name="light_blue_shade">#12B2E6</color>
 
 
-
     <color name="fontcolordark">#000000</color>
     <color name="fontcolorlight">#181818</color>
     <color name="fontcolordarktwo">#181818</color>
@@ -44,6 +43,7 @@
     <color name="fontcoloreditexthint">@color/black_overlay</color>
     <color name="fontcolorsearchtext">@color/black</color>
     <color name="fontcolorsearchtexthint">@color/overlay_dark_60</color>
+    <color name="fontcolortextviewlight">@color/grey_300</color>
     <color name="fontcolortextview">@color/black</color>
     <color name="fontcolorbutton">@color/black</color>
 
@@ -83,8 +83,8 @@
 
     <color name="ed_highlight_color">#1F211663</color>
     <color name="ed_font_color">@color/black</color>
-    <color name="ed_font_color_hint">@color/grey_300</color>
-    <color name="ed_drawable_tint">@color/grey_300</color>
+    <color name="ed_font_color_hint">@color/grey_450</color>
+    <color name="ed_drawable_tint">@color/grey_450</color>
 
     <color name="buttonfontcolor_enabled">#000000</color>
     <color name="buttonfontcolor_disabled">#000000</color>
@@ -427,6 +427,7 @@
     <color name="grey_200">#EEEEEE</color>
     <color name="grey_300">#E0E0E0</color>
     <color name="grey_400">#BDBDBD</color>
+    <color name="grey_450">#B1B1B1</color>
     <color name="grey_500">#9E9E9E</color>
     <color name="grey_600">#757575</color>
     <color name="grey_700">#616161</color>

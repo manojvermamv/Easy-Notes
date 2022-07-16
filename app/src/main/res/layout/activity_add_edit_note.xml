@@ -29,10 +29,11 @@
                     style="@style/Custom.EditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
                     android:layout_margin="10dp"
-                    android:textSize="24sp"
-                    android:hint="Title" />
+                    android:padding="4dp"
+                    android:background="@android:color/transparent"
+                    android:hint="Title"
+                    android:textSize="24sp" />
 
                 <!--edit text for note description-->
                 <EditText
@@ -42,11 +43,12 @@
                     android:layout_height="match_parent"
                     android:layout_above="@id/saveBtn"
                     android:layout_below="@id/edtNoteName"
-                    android:background="@android:color/transparent"
                     android:layout_margin="10dp"
+                    android:background="@android:color/transparent"
                     android:gravity="start|top"
                     android:hint="Start typing"
                     android:inputType="textMultiLine"
+                    android:padding="4dp"
                     android:singleLine="false" />
 
                 <!--button for saving and updating a note-->
@@ -59,7 +61,7 @@
                     android:background="@drawable/custom_button_back"
                     android:text="Button"
                     android:textAllCaps="false"
-                    android:textColor="@color/fontcolortextview" />
+                    android:textColor="@color/white" />
 
             </RelativeLayout>
 

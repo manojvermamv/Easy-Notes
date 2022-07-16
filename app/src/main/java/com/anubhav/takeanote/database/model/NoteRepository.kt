@@ -4,6 +4,21 @@ import androidx.lifecycle.LiveData
 
 class NoteRepository(private val noteDao: NoteDao) {
 
+    companion object {
+
+        var noteRepository: NoteRepository? = null
+
+        @JvmStatic
+        @Synchronized
+        fun getInstance(noteDao: NoteDao): NoteRepository {
+            if (noteRepository == null) {
+                noteRepository = NoteRepository(noteDao)
+            }
+            return noteRepository as NoteRepository
+        }
+
+    }
+
     // on below line we are creating a variable for our list
     // and we are getting all the notes from our DAO class.
     val allNotes: LiveData<List<Note>> = noteDao.getAllNotes()
@@ -18,6 +33,10 @@ class NoteRepository(private val noteDao: NoteDao) {
     // for deleting our note from database.
     suspend fun delete(note: Note) {
         noteDao.delete(note)
+    }
+
+    suspend fun delete(taskId: Int) {
+        noteDao.delete(taskId)
     }
 
     suspend fun deleteAll() {
