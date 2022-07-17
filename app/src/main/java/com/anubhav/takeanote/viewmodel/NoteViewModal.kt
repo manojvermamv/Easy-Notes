@@ -59,4 +59,12 @@ class NoteViewModal(application: Application) : AndroidViewModel(application) {
         repository.insert(note)
     }
 
+    fun searchNotes(query: String?) = viewModelScope.launch(Dispatchers.IO) {
+        allNotes = if (query == null || query.isEmpty()) {
+            repository.allNotes
+        } else {
+            repository.searchNotes(query)
+        }
+    }
+
 }

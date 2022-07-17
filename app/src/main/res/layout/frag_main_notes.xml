@@ -12,20 +12,43 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_view"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/back_searchview"
+                android:gravity="center_vertical"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                app:iconifiedByDefault="false"
+                app:queryBackground="@android:color/transparent"
+                app:queryHint="@string/search_notes"
+                app:searchHintIcon="@drawable/ic_round_search_24" />
+
             <!--recycler view for displaying all notes-->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/notesRV"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_below="@+id/search_view"
                 android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
                 android:overScrollMode="never"
                 tools:listitem="@layout/note_rv_item" />
 
             <include
                 android:id="@+id/lay_not_found"
-                layout="@layout/item_not_found" />
+                layout="@layout/item_not_found"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/search_view" />
 
             <!--fab for adding a new note-->
             <com.google.android.material.floatingactionbutton.FloatingActionButton

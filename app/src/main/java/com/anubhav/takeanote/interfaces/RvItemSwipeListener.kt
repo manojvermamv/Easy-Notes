@@ -1,5 +1,6 @@
 package com.anubhav.takeanote.interfaces
 
-interface RvItemDeleteListener {
+interface RvItemSwipeListener {
     fun onItemDelete(position: Int)
+    fun onItemFavorite(position: Int)
 }

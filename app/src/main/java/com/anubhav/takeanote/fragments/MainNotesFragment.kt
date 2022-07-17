@@ -1,18 +1,28 @@
 package com.anubhav.takeanote.fragments
 
-import android.content.Intent
+import android.app.Dialog
+import android.app.SearchManager
+import android.content.Context
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.anubhav.commonutility.SwipeDeleteHelper
+import com.anubhav.commonutility.ItemSwipeHelper
 import com.anubhav.commonutility.customfont.FontUtils
 import com.anubhav.takeanote.R
 import com.anubhav.takeanote.activities.AddEditNoteActivity
@@ -20,7 +30,8 @@ import com.anubhav.takeanote.adapters.NoteAdapter
 import com.anubhav.takeanote.adapters.NoteItemClickInterface
 import com.anubhav.takeanote.database.model.Note
 import com.anubhav.takeanote.databinding.FragMainNotesBinding
-import com.anubhav.takeanote.interfaces.RvItemDeleteListener
+import com.anubhav.takeanote.interfaces.RvItemSwipeListener
+import com.anubhav.takeanote.utils.GlobalData
 import com.anubhav.takeanote.viewmodel.NoteViewModal
 
 
@@ -63,7 +74,7 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        FontUtils.setFont(requireContext(), binding.root as ViewGroup)
+        FontUtils.setFont(context, binding.root as ViewGroup)
 
         // on below line we are initializing our view modal.
         viewModal = ViewModelProvider(
@@ -72,17 +83,17 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         ).get(NoteViewModal::class.java)
 
         binding.addFab.setOnClickListener {
-            val intent = Intent(requireContext(), AddEditNoteActivity::class.java)
-            startActivity(intent)
+            AddEditNoteActivity.start(requireActivity(), binding.addFab, null)
         }
 
+        initSearchView()
         initRecyclerView()
     }
 
     private fun initRecyclerView() {
         // on below line we are setting layout
         // manager to our recycler view.
-        binding.notesRV.layoutManager = LinearLayoutManager(requireContext())
+        binding.notesRV.layoutManager = LinearLayoutManager(context)
 
         // on below line we are initializing our adapter class.
         noteRVAdapter = NoteAdapter(requireContext(), this)
@@ -102,9 +113,53 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
             }
         }
 
-        val itemTouchHelper =
-            ItemTouchHelper(SwipeDeleteHelper(itemDeleteListener, requireContext()))
+        val itemTouchHelper = ItemTouchHelper(ItemSwipeHelper(itemSwipeListener, context))
         itemTouchHelper.attachToRecyclerView(binding.notesRV)
+    }
+
+    private fun initSearchView() {
+        val imageTintColor: ColorStateList =
+            ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.imagetintcolor_grey))
+        val searchManager: SearchManager =
+            requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
+
+        val searchView = binding.searchView
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
+        searchView.maxWidth = Int.MAX_VALUE
+
+        /*Expanding the search view */
+        searchView.isIconified = false
+        searchView.setIconifiedByDefault(false)
+
+        /* Code for changing the text color and hint color for the search view */
+        val searchAutoComplete =
+            searchView.findViewById(androidx.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
+        searchAutoComplete.setTextColor(resources.getColor(R.color.fontcoloreditext))
+        searchAutoComplete.setHintTextColor(resources.getColor(R.color.fontcoloreditexthint))
+
+        /*Code for changing the search icon */
+        val searchIcon =
+            searchView.findViewById(androidx.appcompat.R.id.search_mag_icon) as ImageView
+        searchIcon.setImageResource(R.drawable.ic_round_search_24)
+        searchIcon.imageTintList = imageTintColor
+
+        /*Code for changing the voice search icon
+        val voiceIcon = searchView.findViewById(androidx.appcompat.R.id.search_voice_btn) as ImageView
+        voiceIcon.setImageResource(R.drawable.ic_round_mic_none_24);
+        voiceIcon.imageTintList = imageTintColor;*/
+
+        GlobalData.setSearchViewCursor(searchView, R.drawable.cursor_search)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModal.searchNotes(query)
+                return false
+            }
+
+            override fun onQueryTextChange(query: String?): Boolean {
+                viewModal.searchNotes(query)
+                return false
+            }
+        })
     }
 
     override fun onResume() {
@@ -112,25 +167,54 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         viewModal.getAllNotes()
     }
 
-    override fun onNoteClick(note: Note) {
-        // opening a new intent and passing a data to it.
-        val intent = Intent(requireContext(), AddEditNoteActivity::class.java)
-        intent.putExtra("updateNote", true)
-        intent.putExtra("noteData", note)
-        startActivity(intent)
+    override fun onNoteClick(view: View, note: Note) {
+        AddEditNoteActivity.start(requireActivity(), view, note)
     }
 
     override fun onNoteDeleteClick(note: Note) {
-        viewModal.deleteNote(note)
-        Toast.makeText(requireContext(), "${note.noteTitle} Deleted", Toast.LENGTH_SHORT).show()
+        showNoteDeleteDialog(note)
     }
 
-    var itemDeleteListener: RvItemDeleteListener = object : RvItemDeleteListener {
+    private var itemSwipeListener: RvItemSwipeListener = object : RvItemSwipeListener {
         override fun onItemDelete(position: Int) {
             val note: Note = noteRVAdapter.currentList[position]
-            viewModal.deleteNote(note)
-            Toast.makeText(requireContext(), "${note.noteTitle} Deleted", Toast.LENGTH_SHORT).show()
+            showNoteDeleteDialog(note)
         }
+
+        override fun onItemFavorite(position: Int) {
+
+        }
+    }
+
+    private fun showNoteDeleteDialog(note: Note) {
+        val dialog = Dialog(requireContext(), R.style.CustomDialogTheme)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.dialog_delete_note)
+
+        FontUtils.setFont(
+            context,
+            dialog.findViewById<ViewGroup>(R.id.root_view)
+        )
+
+        val textTitle = dialog.findViewById<View>(R.id.dialog_title) as TextView
+        textTitle.setText(R.string.confirm_delete_title)
+        val textDesc = dialog.findViewById<View>(R.id.dialog_desc) as TextView
+        textDesc.setText(R.string.confirm_delete_desc)
+
+        val declineDialogButton = dialog.findViewById<Button>(R.id.bt_decline)
+        declineDialogButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val confirmDialogButton = dialog.findViewById<Button>(R.id.bt_confirm)
+        confirmDialogButton.setOnClickListener {
+            viewModal.deleteNote(note)
+            Toast.makeText(context, "${note.noteTitle} Deleted", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+        }
+        dialog.show()
+        dialog.setOnDismissListener { noteRVAdapter.notifyDataSetChanged() }
     }
 
 }

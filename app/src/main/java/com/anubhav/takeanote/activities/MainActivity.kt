@@ -1,17 +1,13 @@
 package com.anubhav.takeanote.activities
 
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
-import androidx.viewpager.widget.ViewPager
 import com.anubhav.commonutility.customfont.FontUtils
 import com.anubhav.takeanote.R
 import com.anubhav.takeanote.adapters.MainActionsAdapter

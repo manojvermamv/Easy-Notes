@@ -23,4 +23,24 @@
     <string name="nonterworkconn">No network connection. Connect to the \ninternet and try again</string>
     <string name="nointernet">No Internet connection</string>
 
+    <string name="done">Done</string>
+    <string name="ok">OK</string>
+    <string name="send">Send</string>
+    <string name="grant">Grant</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="delete">Delete</string>
+    <string name="setting">Settings</string>
+    <string name="settings">Setting</string>
+    <string name="required">Required*</string>
+    <string name="save">Save</string>
+    <string name="update">Update</string>
+    <string name="title">Title</string>
+    <string name="start_typing">Start typing</string>
+    <string name="search_notes">Search notes</string>
+
+    <string name="confirm_delete_title">Warring!</string>
+    <string name="confirm_delete_desc">Do you want to delete this note!</string>
+
 </resources>

@@ -49,4 +49,8 @@ class NoteRepository(private val noteDao: NoteDao) {
         noteDao.update(note)
     }
 
+    fun searchNotes(query: String): LiveData<List<Note>> {
+        return noteDao.searchNotes(query)
+    }
+
 }

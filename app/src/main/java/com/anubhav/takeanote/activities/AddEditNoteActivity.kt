@@ -1,12 +1,20 @@
 package com.anubhav.takeanote.activities
 
 import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.anubhav.commonutility.customfont.FontUtils
@@ -14,21 +22,62 @@ import com.anubhav.takeanote.R
 import com.anubhav.takeanote.database.model.Note
 import com.anubhav.takeanote.databinding.ActivityAddEditNoteBinding
 import com.anubhav.takeanote.utils.DateTimeUtils
-import com.anubhav.takeanote.utils.Global
 import com.anubhav.takeanote.utils.GlobalData
 import com.anubhav.takeanote.viewmodel.NoteViewModal
+import com.google.android.material.color.MaterialColors
+import com.google.android.material.transition.platform.MaterialContainerTransform
+import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 
 class AddEditNoteActivity : AppCompatActivity() {
 
+    companion object {
+        val TAG = AddEditNoteActivity::class.simpleName as String
+
+        fun start(activity: Activity, sharedView: View, note: Note?) {
+            val intent = Intent(activity, AddEditNoteActivity::class.java)
+
+            // opening a new intent and passing a data to it.
+            intent.putExtra("updateNote", note != null)
+            if (note != null) intent.putExtra("noteData", note)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                val options: ActivityOptions =
+                    ActivityOptions.makeSceneTransitionAnimation(
+                        activity, sharedView, TAG
+                    )
+                activity.startActivity(intent, options.toBundle())
+            } else {
+                val activityOptions: ActivityOptionsCompat =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        activity, sharedView, TAG
+                    )
+                ActivityCompat.startActivity(activity, intent, activityOptions.toBundle())
+            }
+        }
+
+    }
+
     lateinit var binding: ActivityAddEditNoteBinding
-    var isUpdateNote: Boolean = false
+    private var isUpdateNote: Boolean = false
+    private var isDeleteBtnClicked: Boolean = false
 
     // on below line we are creating variable for
-    // viewmodal and and integer for our note id.
+    // viewModal and and integer for our note id.
     lateinit var viewModal: NoteViewModal
     lateinit var note: Note
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Set up shared element transition
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+            findViewById<View>(android.R.id.content).transitionName = TAG;
+            setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback());
+            window.sharedElementEnterTransition = buildContainerTransform(true);
+            window.sharedElementReturnTransition = buildContainerTransform(false);
+        } else {
+            ViewCompat.setTransitionName(findViewById(android.R.id.content), TAG)
+        }
+
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_add_edit_note)
         GlobalData.setStatusBarBackgroundColor(this, R.color.white)
@@ -48,18 +97,28 @@ class AddEditNoteActivity : AppCompatActivity() {
         binding.layActionbar.actionBarTitle = getString(R.string.app_name)
         binding.layActionbar.menuVisible = true
 
-        binding.layActionbar.imgBack.setOnClickListener(View.OnClickListener {
+        binding.layActionbar.imgBack.setOnClickListener {
             onBackPressed()
-        })
+        }
+
+        binding.layActionbar.btnShare.setOnClickListener {
+            shareNote()
+        }
+
+        binding.layActionbar.btnDelete.setOnClickListener {
+            isDeleteBtnClicked = true
+            if (isUpdateNote) viewModal.deleteNote(note.taskId)
+            onBackPressed()
+        }
     }
 
     private fun onCreateApp() {
         if (isUpdateNote) {
-            binding.saveBtn.text = "Update"
+            binding.saveBtn.setText(R.string.update)
             binding.edtNoteName.setText(note.noteTitle)
             binding.edNoteDesc.setText(note.noteDescription)
         } else {
-            binding.saveBtn.text = "Save"
+            binding.saveBtn.setText(R.string.save)
         }
 
         // on below line we are initialing our view modal.
@@ -69,13 +128,16 @@ class AddEditNoteActivity : AppCompatActivity() {
         ).get(NoteViewModal::class.java)
 
         binding.saveBtn.setOnClickListener {
-            saveNote()
-            finish()
+            onBackPressed()
         }
     }
 
     override fun onBackPressed() {
-        saveNote()
+        if (isDeleteBtnClicked) {
+            isDeleteBtnClicked = false
+        } else {
+            saveNote()
+        }
         super.onBackPressed()
     }
 
@@ -85,31 +147,51 @@ class AddEditNoteActivity : AppCompatActivity() {
         showKeyboard()
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private fun buildContainerTransform(entering: Boolean): MaterialContainerTransform {
+        val transform = MaterialContainerTransform()
+        transform.transitionDirection =
+            if (entering) MaterialContainerTransform.TRANSITION_DIRECTION_ENTER else MaterialContainerTransform.TRANSITION_DIRECTION_RETURN
+        transform.setAllContainerColors(
+            MaterialColors.getColor(findViewById(android.R.id.content), R.attr.colorSurface)
+        )
+        transform.addTarget(android.R.id.content)
+        transform.duration = 400L
+        return transform
+    }
+
     private fun saveNote() {
         val noteTitle = binding.edtNoteName.text.toString().trim()
         val noteDescription = binding.edNoteDesc.text.toString().trim()
 
-        if (noteDescription.isNotEmpty()) {
+        if (noteTitle.isNotEmpty() || noteDescription.isNotEmpty()) {
             val currentTime: String = DateTimeUtils.getCurrentTime()
             if (isUpdateNote) {
-                val updatedNote = Note(noteTitle, noteDescription, currentTime)
-                updatedNote.taskId = note.taskId
-                viewModal.updateNote(updatedNote)
+                if (!(noteTitle == note.noteTitle && noteDescription == note.noteDescription)) {
+                    val updatedNote = Note(noteTitle, noteDescription, currentTime)
+                    updatedNote.taskId = note.taskId
+                    viewModal.updateNote(updatedNote)
+                }
             } else {
                 viewModal.addNote(Note(noteTitle, noteDescription, currentTime))
             }
         }
 
-        if (isUpdateNote && noteTitle.isEmpty()) {
-            viewModal.deleteNote(note.taskId)
-
-        } else if (isUpdateNote && noteDescription.isEmpty()) {
-            viewModal.deleteNote(note.taskId)
-
+        if (isUpdateNote && (noteTitle.isNotEmpty() || noteDescription.isNotEmpty())) {
+            if (!(noteTitle == note.noteTitle && noteDescription == note.noteDescription)) {
+                val currentTime: String = DateTimeUtils.getCurrentTime()
+                val updatedNote = Note(noteTitle, noteDescription, currentTime)
+                updatedNote.taskId = note.taskId
+                viewModal.updateNote(updatedNote)
+            }
         } else if (isUpdateNote && noteTitle.isEmpty() && noteDescription.isEmpty()) {
             viewModal.deleteNote(note.taskId)
-
         }
+    }
+
+    private fun shareNote() {
+        val noteTitle = binding.edtNoteName.text.toString().trim()
+        val noteDescription = binding.edNoteDesc.text.toString().trim()
     }
 
     private fun showKeyboard() {

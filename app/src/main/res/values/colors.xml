@@ -92,7 +92,7 @@
     <color name="buttonbackgroundtintcolor">@color/colorAccent</color>
 
     <color name="imagetintcolor">@color/white</color>
-    <color name="imagetintcolor_grey">@color/grey_600</color>
+    <color name="imagetintcolor_grey">@color/grey_500</color>
 
     <color name="divider">#999999</color>
     <color name="dividercolor">#1F000000</color>

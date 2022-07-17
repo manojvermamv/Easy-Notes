@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="6dp"
         android:background="@drawable/back_note_item"
-        android:onClick="@{(view) -> onNoteItemClick.onNoteClick(note)}">
+        android:onClick="@{(view) -> onNoteItemClick.onNoteClick(view, note)}">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -42,6 +42,7 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="4dp"
                 android:layout_toStartOf="@id/idIVDelete"
+                android:maxLines="1"
                 android:padding="3dp"
                 android:text="@{TextUtils.isEmpty(note.noteTitle)? note.noteDescription : note.noteTitle}"
                 android:textColor="@color/fontcolortextview"
@@ -53,12 +54,12 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/idTVNote"
                 android:layout_toStartOf="@id/idIVDelete"
-                android:maxLines="1"
+                android:maxLines="2"
                 android:padding="3dp"
                 android:text="@{note.noteDescription}"
                 android:textColor="@color/grey_500"
                 android:textSize="15sp"
-                android:visibility="@{TextUtils.isEmpty(note.noteTitle)? View.GONE : View.VISIBLE, default=visible}" />
+                android:visibility="@{TextUtils.isEmpty(note.noteTitle)? View.GONE : (TextUtils.isEmpty(note.noteDescription)? View.GONE : View.VISIBLE), default=visible}" />
 
             <!--text view for displaying our last updated text-->
             <TextView

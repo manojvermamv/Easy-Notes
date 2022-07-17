@@ -95,7 +95,7 @@
         <item name="android:textColorPrimary">@color/app_main_title_color</item>
         <item name="android:textColorSecondary">@color/app_main_sub_title_color</item>
         <!--<item name="android:colorBackground">@color/white</item>-->
-        <item name="dialogCornerRadius">10dp</item>
+        <item name="dialogCornerRadius">18dp</item>
         <item name="elevation">5dp</item>
         <item name="android:buttonBarNegativeButtonStyle">@style/AlertDialogButtonNegative</item>
         <item name="android:buttonBarNeutralButtonStyle">@style/AlertDialogButton</item>

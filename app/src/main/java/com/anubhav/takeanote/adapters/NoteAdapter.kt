@@ -2,6 +2,7 @@ package com.anubhav.takeanote.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -76,6 +77,6 @@ class NoteDiffUtil : DiffUtil.ItemCallback<Note>() {
 }
 
 interface NoteItemClickInterface {
-    fun onNoteClick(note: Note);
+    fun onNoteClick(view: View, note: Note);
     fun onNoteDeleteClick(note: Note)
 }

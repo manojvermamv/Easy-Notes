@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 
 import com.anubhav.takeanote.R;
@@ -59,7 +60,7 @@ public class GlobalData {
         List<T> result = new ArrayList<T>();
         if (obj instanceof List<?>) {
             List<?> list = (List<?>) obj;
-            //for (Object o : list) {
+            //for (Object o : list) {setEditTextCursor(Edi
             for (int i = 0; i < list.size(); i++) {
                 result.add(clazz.cast(list.get(i)));
             }
@@ -120,6 +121,15 @@ public class GlobalData {
             @SuppressLint("SoonBlockedPrivateApi") Field f = TextView.class.getDeclaredField("mCursorDrawableRes");
             f.setAccessible(true);
             f.set(editText, drawableRes);
+        } catch (Exception ignored) {
+        }
+    }
+
+    public static void setSearchViewCursor(SearchView searchView, @DrawableRes int drawableRes) {
+        try {
+            @SuppressLint("SoonBlockedPrivateApi") Field f = TextView.class.getDeclaredField("mCursorDrawableRes");
+            f.setAccessible(true);
+            f.set(searchView, drawableRes);
         } catch (Exception ignored) {
         }
     }
@@ -469,8 +479,8 @@ public class GlobalData {
     /**
      * Sets the status bar background color.
      *
-     * @param activity  activity reference required.
-     * @param color     background color resources for statusBar background.
+     * @param activity activity reference required.
+     * @param color    background color resources for statusBar background.
      */
     public static void setStatusBarBackgroundColor(Activity activity, @ColorRes int color) {
         setStatusBarBackgroundColor(activity, color, false);
