@@ -23,6 +23,7 @@ import com.anubhav.takeanote.database.model.Note
 import com.anubhav.takeanote.databinding.ActivityAddEditNoteBinding
 import com.anubhav.takeanote.utils.DateTimeUtils
 import com.anubhav.takeanote.utils.GlobalData
+import com.anubhav.takeanote.utils.HelperMethod
 import com.anubhav.takeanote.viewmodel.NoteViewModal
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.transition.platform.MaterialContainerTransform
@@ -69,18 +70,19 @@ class AddEditNoteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // Set up shared element transition
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
-            findViewById<View>(android.R.id.content).transitionName = TAG;
-            setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback());
-            window.sharedElementEnterTransition = buildContainerTransform(true);
-            window.sharedElementReturnTransition = buildContainerTransform(false);
+            window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
+            findViewById<View>(android.R.id.content).transitionName = TAG
+            setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+            window.sharedElementEnterTransition = buildContainerTransform(true)
+            window.sharedElementReturnTransition = buildContainerTransform(false)
         } else {
-            ViewCompat.setTransitionName(findViewById(android.R.id.content), TAG)
+            ViewCompat.setTransitionName(findViewById<View>(android.R.id.content), TAG)
         }
 
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_add_edit_note)
-        GlobalData.setStatusBarBackgroundColor(this, R.color.white)
+        GlobalData.setStatusBarFullScreen(this)
+        setViewHeight(binding.topView)
         FontUtils.setFont(this, binding.root as ViewGroup)
 
         // on below line we are getting data passed via an intent.
@@ -211,6 +213,12 @@ class AddEditNoteActivity : AppCompatActivity() {
                 InputMethodManager.HIDE_NOT_ALWAYS
             )
         }
+    }
+
+    private fun setViewHeight(view: View) {
+        val params: ViewGroup.LayoutParams = view.layoutParams
+        params.height = HelperMethod.getStatusBarHeight(this)
+        view.layoutParams = params
     }
 
 }

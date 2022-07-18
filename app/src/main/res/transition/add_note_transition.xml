@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<transitionSet xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <transitionSet>
+        <targets>
+            <target android:targetId="@android:id/content" />
+        </targets>
+        <!-- Custom transition to take care of rounded corner to square corners transition -->
+        <transition
+            class="com.anubhav.commonutility.ui.ChangeOutlineRadius"
+            app:endRadius="@dimen/square_corner_radius"
+            app:startRadius="@dimen/default_corner_radius" />
+        <!-- Default shared element transitions -->
+        <changeBounds />
+        <changeTransform />
+        <changeClipBounds />
+        <changeImageTransform />
+    </transitionSet>
+</transitionSet>

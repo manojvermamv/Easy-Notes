@@ -5,4 +5,8 @@
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">180dp</dimen>
 
+    <dimen name="square_corner_radius">18dp</dimen>
+    <dimen name="default_corner_radius">18dp</dimen>
+    <dimen name="fab_corner_radius">25dp</dimen>
+
 </resources>

@@ -3,72 +3,89 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.cardview.widget.CardView
+        android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:cardCornerRadius="25dp"
+        app:cardElevation="0dp"
         tools:context=".activities.AddEditNoteActivity">
 
         <RelativeLayout
-            android:id="@+id/relativeLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <include
-                android:id="@+id/lay_actionbar"
-                layout="@layout/include_actionbar_normal" />
+            <View
+                android:id="@+id/top_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_alignParentTop="true"
+                android:background="@android:color/white" />
 
             <RelativeLayout
+                android:id="@+id/relativeLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/lay_actionbar"
-                android:padding="10dp">
+                android:layout_below="@+id/top_view">
 
-                <!--edit text for note title-->
-                <EditText
-                    android:id="@+id/edtNoteName"
-                    style="@style/Custom.EditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:background="@android:color/transparent"
-                    android:hint="@string/title"
-                    android:maxLines="3"
-                    android:padding="4dp"
-                    android:textSize="24sp" />
+                <include
+                    android:id="@+id/lay_actionbar"
+                    layout="@layout/include_actionbar_normal" />
 
-                <!--edit text for note description-->
-                <EditText
-                    android:id="@+id/edNoteDesc"
-                    style="@style/Custom.EditText"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_above="@id/saveBtn"
-                    android:layout_below="@id/edtNoteName"
-                    android:layout_margin="10dp"
-                    android:background="@android:color/transparent"
-                    android:gravity="start|top"
-                    android:hint="@string/start_typing"
-                    android:inputType="textMultiLine"
-                    android:padding="4dp"
-                    android:singleLine="false" />
+                    android:layout_below="@+id/lay_actionbar"
+                    android:padding="10dp">
 
-                <!--button for saving and updating a note-->
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/saveBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_margin="20dp"
-                    android:background="@drawable/custom_button_back"
-                    android:text="@string/save"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="15sp" />
+                    <!--edit text for note title-->
+                    <EditText
+                        android:id="@+id/edtNoteName"
+                        style="@style/Custom.EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:background="@android:color/transparent"
+                        android:hint="@string/title"
+                        android:maxLines="3"
+                        android:padding="4dp"
+                        android:textSize="24sp" />
+
+                    <!--edit text for note description-->
+                    <EditText
+                        android:id="@+id/edNoteDesc"
+                        style="@style/Custom.EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_above="@id/saveBtn"
+                        android:layout_below="@id/edtNoteName"
+                        android:layout_margin="10dp"
+                        android:background="@android:color/transparent"
+                        android:gravity="start|top"
+                        android:hint="@string/start_typing"
+                        android:inputType="textMultiLine"
+                        android:padding="4dp"
+                        android:singleLine="false" />
+
+                    <!--button for saving and updating a note-->
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/saveBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_margin="20dp"
+                        android:background="@drawable/custom_button_back"
+                        android:text="@string/save"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="15sp" />
+
+                </RelativeLayout>
 
             </RelativeLayout>
 
         </RelativeLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 
 </layout>

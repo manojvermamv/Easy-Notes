@@ -63,10 +63,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val adapter = MainActionsAdapter(this, supportFragmentManager)
         binding.viewPager.setSwipeable(false)
         binding.viewPager.adapter = adapter
-        binding.tabLayout.setupWithViewPager(binding.viewPager, true);
+        binding.tabLayout.setupWithViewPager(binding.viewPager, true)
         for (i in 0 until binding.tabLayout.tabCount) {
             val view: View = layoutInflater.inflate(R.layout.custom_tab_icon, null)
-            view.findViewById<ImageView>(R.id.icon).setImageResource(tabIconRes[i]);
+            view.findViewById<ImageView>(R.id.icon).setImageResource(tabIconRes[i])
             val tab = binding.tabLayout.getTabAt(i) as TabLayout.Tab
             tab.customView = view;
             if (i == 1) tab.view.isEnabled = false

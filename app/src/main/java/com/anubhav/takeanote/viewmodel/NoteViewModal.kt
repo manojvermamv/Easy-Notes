@@ -7,6 +7,7 @@ import com.anubhav.takeanote.database.model.Note
 import com.anubhav.takeanote.database.model.NoteRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
 
 class NoteViewModal(application: Application) : AndroidViewModel(application) {
 
@@ -16,9 +17,9 @@ class NoteViewModal(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // on below line we are creating a variable
-    // for our all notes list and repository
+    // Public access - immutableLiveData
     var allNotes: LiveData<List<Note>>
+
     private val repository: NoteRepository
 
     // on below line we are initializing
@@ -29,7 +30,11 @@ class NoteViewModal(application: Application) : AndroidViewModel(application) {
         allNotes = repository.allNotes
     }
 
-    fun getAllNotes() = viewModelScope.launch(Dispatchers.IO) {
+    private fun getAllNotes(): List<Note> {
+        return repository.allNotes.value ?: listOf()
+    }
+
+    fun updateNotes() = viewModelScope.launch(Dispatchers.IO) {
         allNotes = repository.allNotes
     }
 
@@ -59,11 +64,19 @@ class NoteViewModal(application: Application) : AndroidViewModel(application) {
         repository.insert(note)
     }
 
-    fun searchNotes(query: String?) = viewModelScope.launch(Dispatchers.IO) {
-        allNotes = if (query == null || query.isEmpty()) {
-            repository.allNotes
+    fun searchNotes(query: String?) : List<Note> {
+        val newList: List<Note> = getAllNotes()
+
+        if (query == null || query.isEmpty()) {
+            return newList
         } else {
-            repository.searchNotes(query)
+            val mQuery = query.trim().toLowerCase(Locale.ROOT)
+            val filterList = newList.filter {
+                it.noteTitle.toLowerCase(Locale.ROOT).contains(mQuery)
+                        || it.noteDescription.toLowerCase(Locale.ROOT).contains(mQuery)
+            }
+            filterList.sortedBy { it.noteTitle }
+            return filterList
         }
     }
 

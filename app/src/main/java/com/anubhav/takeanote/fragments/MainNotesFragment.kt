@@ -5,18 +5,13 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
+import android.view.*
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.content.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -119,7 +114,12 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
 
     private fun initSearchView() {
         val imageTintColor: ColorStateList =
-            ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.imagetintcolor_grey))
+            ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.imagetintcolor_grey
+                )
+            )
         val searchManager: SearchManager =
             requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
 
@@ -151,12 +151,14 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         GlobalData.setSearchViewCursor(searchView, R.drawable.cursor_search)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                viewModal.searchNotes(query)
+                val list = viewModal.searchNotes(query)
+                noteRVAdapter.submitList(list)
                 return false
             }
 
             override fun onQueryTextChange(query: String?): Boolean {
-                viewModal.searchNotes(query)
+                val list = viewModal.searchNotes(query)
+                noteRVAdapter.submitList(list)
                 return false
             }
         })
@@ -164,7 +166,7 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
 
     override fun onResume() {
         super.onResume()
-        viewModal.getAllNotes()
+        viewModal.updateNotes()
     }
 
     override fun onNoteClick(view: View, note: Note) {
