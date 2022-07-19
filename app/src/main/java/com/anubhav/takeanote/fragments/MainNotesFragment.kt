@@ -1,19 +1,27 @@
 package com.anubhav.takeanote.fragments
 
+import android.app.ActivityOptions
 import android.app.Dialog
 import android.app.SearchManager
 import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
+import android.os.Build
 import android.os.Bundle
+import android.transition.TransitionManager
 import android.view.*
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.SearchView
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,6 +36,9 @@ import com.anubhav.takeanote.databinding.FragMainNotesBinding
 import com.anubhav.takeanote.interfaces.RvItemSwipeListener
 import com.anubhav.takeanote.utils.GlobalData
 import com.anubhav.takeanote.viewmodel.NoteViewModal
+import com.google.android.material.color.MaterialColors
+import com.google.android.material.transition.platform.MaterialArcMotion
+import com.google.android.material.transition.platform.MaterialContainerTransform
 
 
 private const val ARG_PARAM1 = "param1"
@@ -78,7 +89,7 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         ).get(NoteViewModal::class.java)
 
         binding.addFab.setOnClickListener {
-            AddEditNoteActivity.start(requireActivity(), binding.addFab, null, false)
+            AddEditNoteActivity.start(requireActivity(), binding.addFab, null, true)
         }
 
         initSearchView()
@@ -155,7 +166,7 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
                 binding.layNotFound.rootView.visibility =
                     if (list.isEmpty()) View.VISIBLE else View.GONE
                 noteRVAdapter.submitList(list)
-                return false
+                return true
             }
 
             override fun onQueryTextChange(query: String?): Boolean {
@@ -163,7 +174,7 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
                 binding.layNotFound.rootView.visibility =
                     if (list.isEmpty()) View.VISIBLE else View.GONE
                 noteRVAdapter.submitList(list)
-                return false
+                return true
             }
         })
     }
@@ -174,7 +185,7 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
     }
 
     override fun onNoteClick(view: View, note: Note) {
-        AddEditNoteActivity.start(requireActivity(), view, note, false)
+        AddEditNoteActivity.start(requireActivity(), view, note, true)
     }
 
     override fun onNoteDeleteClick(note: Note) {

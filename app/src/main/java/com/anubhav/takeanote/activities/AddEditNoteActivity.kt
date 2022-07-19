@@ -4,8 +4,10 @@ import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.transition.Fade
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -16,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.ViewModelProvider
 import com.anubhav.commonutility.customfont.FontUtils
 import com.anubhav.takeanote.R
@@ -26,6 +29,7 @@ import com.anubhav.takeanote.utils.GlobalData
 import com.anubhav.takeanote.utils.HelperMethod
 import com.anubhav.takeanote.viewmodel.NoteViewModal
 import com.google.android.material.color.MaterialColors
+import com.google.android.material.transition.platform.MaterialArcMotion
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 
@@ -81,6 +85,7 @@ class AddEditNoteActivity : AppCompatActivity() {
                 setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
                 window.sharedElementEnterTransition = buildContainerTransform(true)
                 window.sharedElementReturnTransition = buildContainerTransform(false)
+                window.sharedElementsUseOverlay = true;
             } else {
                 ViewCompat.setTransitionName(findViewById<View>(android.R.id.content), TAG)
             }
@@ -88,7 +93,9 @@ class AddEditNoteActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_add_edit_note)
+        //excludeStatusAndNavBarFromTransition(window)
         GlobalData.setStatusBarFullScreen(this)
+
         setViewHeight(binding.topView)
         FontUtils.setFont(this, binding.root as ViewGroup)
 
@@ -129,16 +136,13 @@ class AddEditNoteActivity : AppCompatActivity() {
         } else {
             binding.saveBtn.setText(R.string.save)
         }
+        binding.saveBtn.setOnClickListener { onBackPressed() }
 
         // on below line we are initialing our view modal.
         viewModal = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         ).get(NoteViewModal::class.java)
-
-        binding.saveBtn.setOnClickListener {
-            onBackPressed()
-        }
     }
 
     override fun onBackPressed() {
@@ -165,7 +169,10 @@ class AddEditNoteActivity : AppCompatActivity() {
             MaterialColors.getColor(findViewById(android.R.id.content), R.attr.colorSurface)
         )
         transform.addTarget(android.R.id.content)
-        transform.duration = 400L
+        transform.fitMode = MaterialContainerTransform.FIT_MODE_AUTO
+        transform.pathMotion = MaterialArcMotion()
+        transform.interpolator = FastOutSlowInInterpolator()
+        transform.duration = 500L
         return transform
     }
 

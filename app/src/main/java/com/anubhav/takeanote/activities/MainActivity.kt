@@ -1,9 +1,11 @@
 package com.anubhav.takeanote.activities
 
 import android.os.Bundle
+import android.transition.Fade
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -31,6 +33,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        //excludeStatusAndNavBarFromTransition(window)
 
         onCreateActionBar()
         onCreateApp()
@@ -129,4 +132,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
     }
 
+}
+
+fun excludeStatusAndNavBarFromTransition(window: Window) {
+    val fade = Fade()
+    fade.excludeTarget(android.R.id.statusBarBackground, true)
+    fade.excludeTarget(android.R.id.navigationBarBackground, true)
+    window.enterTransition = fade
+    window.exitTransition = fade
 }

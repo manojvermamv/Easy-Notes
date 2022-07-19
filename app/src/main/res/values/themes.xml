@@ -15,6 +15,7 @@
         <!-- Customize your theme here. -->
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="android:windowBackground">@color/app_main_background_color</item>
+        <item name="android:windowContentTransitions">true</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
