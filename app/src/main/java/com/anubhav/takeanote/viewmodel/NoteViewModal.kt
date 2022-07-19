@@ -64,20 +64,26 @@ class NoteViewModal(application: Application) : AndroidViewModel(application) {
         repository.insert(note)
     }
 
-    fun searchNotes(query: String?) : List<Note> {
-        val newList: List<Note> = getAllNotes()
+    fun searchNotes(query: String?): List<Note> {
+        val list: List<Note> = getAllNotes()
+        val filterList = mutableListOf<Note>()
 
-        if (query == null || query.isEmpty()) {
-            return newList
-        } else {
-            val mQuery = query.trim().toLowerCase(Locale.ROOT)
-            val filterList = newList.filter {
-                it.noteTitle.toLowerCase(Locale.ROOT).contains(mQuery)
-                        || it.noteDescription.toLowerCase(Locale.ROOT).contains(mQuery)
+        for ((index, note) in list.withIndex()) {
+            if (query == null || query.isEmpty()) {
+                note.searchQuery = ""
+                filterList.add(note)
+            } else {
+                val mQuery = query.trim()
+                if (note.noteTitle.contains(mQuery)
+                    || note.noteDescription.contains(mQuery)
+                ) {
+                    note.searchQuery = mQuery
+                    filterList.add(note)
+                }
             }
-            filterList.sortedBy { it.noteTitle }
-            return filterList
         }
+        filterList.sortedBy { it.timeStamp }
+        return filterList.toList()
     }
 
 }

@@ -25,7 +25,6 @@ public class ItemSwipeHelper extends ItemTouchHelper.SimpleCallback {
     private static final int LIMIT_SWIPE_LENGTH = 8;
 
     int colorRed, colorBlue;
-    int iconOffsetX = 38;
     int backgroundCornerRadius = 42;
     int backgroundCornerOffset = 42;
 
@@ -99,13 +98,13 @@ public class ItemSwipeHelper extends ItemTouchHelper.SimpleCallback {
     }
 
     private void setLeftSwipe(Canvas canvas, View itemView, float dX) {
-        int iconMargin = (itemView.getHeight() - deleteIcon.getIntrinsicHeight()) / 2;
+        int iconMargin = ((-(int) dX) - deleteIcon.getIntrinsicWidth()) / 2;
         int iconTop = itemView.getTop() + (itemView.getHeight() - deleteIcon.getIntrinsicHeight()) / 2;
         int iconBottom = iconTop + deleteIcon.getIntrinsicHeight();
 
         int iconLeft = itemView.getRight() - iconMargin - deleteIcon.getIntrinsicWidth();
         int iconRight = itemView.getRight() - iconMargin;
-        deleteIcon.setBounds(iconLeft + iconOffsetX, iconTop, iconRight + iconOffsetX, iconBottom);
+        deleteIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
 
         background = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{colorRed, colorRed});
 
@@ -119,13 +118,13 @@ public class ItemSwipeHelper extends ItemTouchHelper.SimpleCallback {
     }
 
     private void setRightSwipe(Canvas canvas, View itemView, float dX) {
-        int iconMargin = (itemView.getHeight() - favoriteIcon.getIntrinsicHeight()) / 2;
+        int iconMargin = (((int) dX) - favoriteIcon.getIntrinsicWidth()) / 2;
         int iconTop = itemView.getTop() + (itemView.getHeight() - favoriteIcon.getIntrinsicHeight()) / 2;
         int iconBottom = iconTop + favoriteIcon.getIntrinsicHeight();
 
         int iconLeft = itemView.getLeft() + iconMargin;
         int iconRight = itemView.getLeft() + iconMargin + favoriteIcon.getIntrinsicWidth();
-        favoriteIcon.setBounds(iconLeft - iconOffsetX, iconTop, iconRight - iconOffsetX, iconBottom);
+        favoriteIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
 
         background = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{colorBlue, colorBlue});
 

@@ -11,7 +11,8 @@ import java.io.Serializable
 class Note(
     @ColumnInfo(name = "title") var noteTitle: String,
     @ColumnInfo(name = "description") var noteDescription: String,
-    @ColumnInfo(name = "timeStamp") var timeStamp: String
+    @ColumnInfo(name = "timeStamp") var timeStamp: String,
+    var searchQuery: String = ""
 ) : ItemViewModel, Serializable {
 
     // on below line we are specifying our key and

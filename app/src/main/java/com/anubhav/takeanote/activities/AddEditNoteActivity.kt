@@ -34,13 +34,18 @@ class AddEditNoteActivity : AppCompatActivity() {
     companion object {
         val TAG = AddEditNoteActivity::class.simpleName as String
 
-        fun start(activity: Activity, sharedView: View, note: Note?) {
+        fun start(activity: Activity, sharedView: View, note: Note?, hasAnimation: Boolean = true) {
             val intent = Intent(activity, AddEditNoteActivity::class.java)
 
             // opening a new intent and passing a data to it.
+            intent.putExtra("hasAnimation", hasAnimation)
             intent.putExtra("updateNote", note != null)
             if (note != null) intent.putExtra("noteData", note)
 
+            if (!hasAnimation) {
+                activity.startActivity(intent)
+                return
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 val options: ActivityOptions =
                     ActivityOptions.makeSceneTransitionAnimation(
@@ -68,15 +73,17 @@ class AddEditNoteActivity : AppCompatActivity() {
     lateinit var note: Note
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Set up shared element transition
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
-            findViewById<View>(android.R.id.content).transitionName = TAG
-            setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
-            window.sharedElementEnterTransition = buildContainerTransform(true)
-            window.sharedElementReturnTransition = buildContainerTransform(false)
-        } else {
-            ViewCompat.setTransitionName(findViewById<View>(android.R.id.content), TAG)
+        if (intent.getBooleanExtra("hasAnimation", true)) {
+            // Set up shared element transition
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                window.requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
+                findViewById<View>(android.R.id.content).transitionName = TAG
+                setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+                window.sharedElementEnterTransition = buildContainerTransform(true)
+                window.sharedElementReturnTransition = buildContainerTransform(false)
+            } else {
+                ViewCompat.setTransitionName(findViewById<View>(android.R.id.content), TAG)
+            }
         }
 
         super.onCreate(savedInstanceState)

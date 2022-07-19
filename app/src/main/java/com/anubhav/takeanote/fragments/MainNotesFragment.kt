@@ -78,7 +78,7 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         ).get(NoteViewModal::class.java)
 
         binding.addFab.setOnClickListener {
-            AddEditNoteActivity.start(requireActivity(), binding.addFab, null)
+            AddEditNoteActivity.start(requireActivity(), binding.addFab, null, false)
         }
 
         initSearchView()
@@ -102,9 +102,9 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         viewModal.allNotes.observe(viewLifecycleOwner) { list ->
             list?.let {
                 // on below line we are updating our list.
-                noteRVAdapter.submitList(it)
                 binding.layNotFound.rootView.visibility =
                     if (it.isEmpty()) View.VISIBLE else View.GONE
+                noteRVAdapter.submitList(it)
             }
         }
 
@@ -152,12 +152,16 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 val list = viewModal.searchNotes(query)
+                binding.layNotFound.rootView.visibility =
+                    if (list.isEmpty()) View.VISIBLE else View.GONE
                 noteRVAdapter.submitList(list)
                 return false
             }
 
             override fun onQueryTextChange(query: String?): Boolean {
                 val list = viewModal.searchNotes(query)
+                binding.layNotFound.rootView.visibility =
+                    if (list.isEmpty()) View.VISIBLE else View.GONE
                 noteRVAdapter.submitList(list)
                 return false
             }
@@ -170,7 +174,7 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
     }
 
     override fun onNoteClick(view: View, note: Note) {
-        AddEditNoteActivity.start(requireActivity(), view, note)
+        AddEditNoteActivity.start(requireActivity(), view, note, false)
     }
 
     override fun onNoteDeleteClick(note: Note) {
@@ -184,20 +188,16 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         }
 
         override fun onItemFavorite(position: Int) {
-
         }
     }
 
     private fun showNoteDeleteDialog(note: Note) {
         val dialog = Dialog(requireContext(), R.style.CustomDialogTheme)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(true)
+        dialog.setCancelable(false)
         dialog.setContentView(R.layout.dialog_delete_note)
 
-        FontUtils.setFont(
-            context,
-            dialog.findViewById<ViewGroup>(R.id.root_view)
-        )
+        FontUtils.setFont(context, dialog.findViewById(R.id.root_view))
 
         val textTitle = dialog.findViewById<View>(R.id.dialog_title) as TextView
         textTitle.setText(R.string.confirm_delete_title)
@@ -206,6 +206,7 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
 
         val declineDialogButton = dialog.findViewById<Button>(R.id.bt_decline)
         declineDialogButton.setOnClickListener {
+            noteRVAdapter.notifyDataSetChanged()
             dialog.dismiss()
         }
 
@@ -216,7 +217,6 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
             dialog.dismiss()
         }
         dialog.show()
-        dialog.setOnDismissListener { noteRVAdapter.notifyDataSetChanged() }
     }
 
 }

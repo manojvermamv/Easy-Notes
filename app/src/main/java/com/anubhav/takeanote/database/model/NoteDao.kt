@@ -21,7 +21,7 @@ interface NoteDao {
     @Query("DELETE FROM notesTable")
     suspend fun deleteAll()
 
-    @Query("SELECT * FROM notesTable ORDER BY taskId DESC")
+    @Query("SELECT * FROM notesTable ORDER BY timeStamp DESC")
     fun getAllNotes(): LiveData<List<Note>>
 
     @Query("SELECT * FROM notesTable WHERE title LIKE '%' || :query || '%' AND description LIKE '%' || :query || '%'")
