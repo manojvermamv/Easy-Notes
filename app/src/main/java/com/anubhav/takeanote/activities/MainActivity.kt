@@ -1,5 +1,6 @@
 package com.anubhav.takeanote.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.transition.Fade
 import android.view.MenuItem
@@ -98,14 +99,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        binding.rootView.closeDrawer(GravityCompat.START)
         when (item.itemId) {
             R.id.nav_favorites -> {
+                startActivity(Intent(this, FavoriteNotesActivity::class.java))
             }
             R.id.nav_other_apps -> GlobalData.openAppStoreDeveloper(this)
             R.id.nav_rate_app -> showRateApp()
             R.id.nav_about -> GlobalData.openAppStoreDeveloper(this)
         }
-        return true
+        return false
     }
 
     override fun onBackPressed() {

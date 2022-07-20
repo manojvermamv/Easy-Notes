@@ -1,9 +1,11 @@
 package com.anubhav.commonutility;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.ColorInt;
@@ -15,16 +17,22 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.anubhav.takeanote.R;
+import com.anubhav.takeanote.database.model.Note;
+import com.anubhav.takeanote.interfaces.RvItemSwipeListener;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ItemSwipeHelper extends ItemTouchHelper.SimpleCallback {
+import java.util.ArrayList;
+import java.util.List;
+
+public class ItemSwipeHelperList extends ItemTouchHelper.SimpleCallback {
 
     private final Context context;
     private GradientDrawable background;
 
     @DrawableRes
     int rightDrawableRes = R.drawable.ic_round_favorite_border_24;
+    int rightDrawableEnabledRes = R.drawable.ic_round_favorite_24;
     int leftDrawableRes = R.drawable.ic_round_delete_outline_24;
     @ColorRes
     int rightColorRes = R.color.colorPrimary;
@@ -36,36 +44,22 @@ public class ItemSwipeHelper extends ItemTouchHelper.SimpleCallback {
     int LIMIT_SWIPE_LENGTH = 8;
     int backgroundCornerOffset = 40;
     float backgroundCornerRadius = 42f;
-    private final OnSwipeListener itemSwipeListener;
+    private List<Note> list;
+    private final RvItemSwipeListener onSwipeListener;
 
-    public interface OnSwipeListener {
-        void onItemLeftSwipe(RecyclerView.ViewHolder viewHolder, int position);
-
-        void onItemRightSwipe(RecyclerView.ViewHolder viewHolder, int position);
-    }
-
-    public ItemSwipeHelper(Context context, OnSwipeListener itemSwipeListener) {
+    public ItemSwipeHelperList(Context context, List<Note> list, RvItemSwipeListener onSwipeListener) {
         super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         this.context = context;
-        this.itemSwipeListener = itemSwipeListener;
+        this.list = list;
+        this.onSwipeListener = onSwipeListener;
     }
 
-    public ItemSwipeHelper(Context context, OnSwipeListener itemSwipeListener, float cornerRadius) {
+    public ItemSwipeHelperList(Context context, List<Note> list, RvItemSwipeListener onSwipeListener, float cornerRadius) {
         super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         this.context = context;
-        this.itemSwipeListener = itemSwipeListener;
+        this.list = list;
+        this.onSwipeListener = onSwipeListener;
         this.backgroundCornerRadius = cornerRadius;
-    }
-
-    public ItemSwipeHelper(Context context, OnSwipeListener itemSwipeListener, float cornerRadius, @DrawableRes int rightDrawable, @DrawableRes int leftDrawable, @ColorRes int rightColor, @ColorRes int leftColor) {
-        super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
-        this.context = context;
-        this.itemSwipeListener = itemSwipeListener;
-        this.backgroundCornerRadius = cornerRadius;
-        this.rightDrawableRes = rightDrawable;
-        this.leftDrawableRes = leftDrawable;
-        this.rightColorRes = rightColor;
-        this.leftColorRes = leftColor;
     }
 
     @Override
@@ -80,12 +74,12 @@ public class ItemSwipeHelper extends ItemTouchHelper.SimpleCallback {
 
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-        if (itemSwipeListener != null) {
+        if (onSwipeListener != null) {
             int position = viewHolder.getAdapterPosition();
             if (direction == ItemTouchHelper.LEFT) {
-                itemSwipeListener.onItemLeftSwipe(viewHolder, position);
+                onSwipeListener.onItemLeftSwipe(viewHolder, position);
             } else if (direction == ItemTouchHelper.RIGHT) {
-                itemSwipeListener.onItemRightSwipe(viewHolder, position);
+                onSwipeListener.onItemRightSwipe(viewHolder, position);
             }
         }
     }
@@ -151,13 +145,24 @@ public class ItemSwipeHelper extends ItemTouchHelper.SimpleCallback {
         // Getting the swiped itemView
         View itemView = viewHolder.itemView;
 
+        // Getting the swiped item
+        boolean isFavorite = false;
+        if (list.size() > viewHolder.getAdapterPosition()) {
+            Note note = list.get(viewHolder.getAdapterPosition());
+            isFavorite = note.isFavorite();
+        }
+
         if (dX < 0) {
             //left swipe
-            setLeftSwipe(c, itemView, dX);
+            Drawable leftIcon = ContextCompat.getDrawable(context, leftDrawableRes);
+            leftIcon.setTintList(ColorStateList.valueOf(ContextCompat.getColor(context, android.R.color.white)));
+            setLeftSwipe(c, itemView, dX, leftIcon);
 
         } else if (dX > 0) {
             //right swipe
-            setRightSwipe(c, itemView, dX);
+            Drawable rightIcon = ContextCompat.getDrawable(context, isFavorite ? rightDrawableEnabledRes : rightDrawableRes);
+            rightIcon.setTintList(ColorStateList.valueOf(ContextCompat.getColor(context, android.R.color.white)));
+            setRightSwipe(c, itemView, dX, rightIcon);
 
         } else {
             //unSwiped
@@ -168,10 +173,7 @@ public class ItemSwipeHelper extends ItemTouchHelper.SimpleCallback {
         }
     }
 
-    private void setLeftSwipe(Canvas canvas, View itemView, float dX) {
-        Drawable leftIcon = ContextCompat.getDrawable(context, leftDrawableRes);
-        assert leftIcon != null;
-
+    private void setLeftSwipe(Canvas canvas, View itemView, float dX, Drawable leftIcon) {
         int iconMargin = ((-(int) dX) - leftIcon.getIntrinsicWidth()) / 2;
         int iconTop = itemView.getTop() + (itemView.getHeight() - leftIcon.getIntrinsicHeight()) / 2;
         int iconBottom = iconTop + leftIcon.getIntrinsicHeight();
@@ -191,10 +193,7 @@ public class ItemSwipeHelper extends ItemTouchHelper.SimpleCallback {
         leftIcon.draw(canvas);
     }
 
-    private void setRightSwipe(Canvas canvas, View itemView, float dX) {
-        Drawable rightIcon = ContextCompat.getDrawable(context, rightDrawableRes);
-        assert rightIcon != null;
-
+    private void setRightSwipe(Canvas canvas, View itemView, float dX, Drawable rightIcon) {
         int iconMargin = (((int) dX) - rightIcon.getIntrinsicWidth()) / 2;
         int iconTop = itemView.getTop() + (itemView.getHeight() - rightIcon.getIntrinsicHeight()) / 2;
         int iconBottom = iconTop + rightIcon.getIntrinsicHeight();

@@ -4,10 +4,8 @@ import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.transition.Fade
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -40,7 +38,6 @@ class AddEditNoteActivity : AppCompatActivity() {
 
         fun start(activity: Activity, sharedView: View, note: Note?, hasAnimation: Boolean = true) {
             val intent = Intent(activity, AddEditNoteActivity::class.java)
-
             // opening a new intent and passing a data to it.
             intent.putExtra("hasAnimation", hasAnimation)
             intent.putExtra("updateNote", note != null)
@@ -113,13 +110,9 @@ class AddEditNoteActivity : AppCompatActivity() {
         binding.layActionbar.actionBarTitle = getString(R.string.app_name)
         binding.layActionbar.menuVisible = true
 
-        binding.layActionbar.imgBack.setOnClickListener {
-            onBackPressed()
-        }
+        binding.layActionbar.imgBack.setOnClickListener { onBackPressed() }
 
-        binding.layActionbar.btnShare.setOnClickListener {
-            shareNote()
-        }
+        binding.layActionbar.btnShare.setOnClickListener { shareNote() }
 
         binding.layActionbar.btnDelete.setOnClickListener {
             isDeleteBtnClicked = true
@@ -186,6 +179,7 @@ class AddEditNoteActivity : AppCompatActivity() {
                 if (!(noteTitle == note.noteTitle && noteDescription == note.noteDescription)) {
                     val updatedNote = Note(noteTitle, noteDescription, currentTime)
                     updatedNote.taskId = note.taskId
+                    updatedNote.isFavorite = note.isFavorite
                     viewModal.updateNote(updatedNote)
                 }
             } else {
@@ -198,6 +192,7 @@ class AddEditNoteActivity : AppCompatActivity() {
                 val currentTime: String = DateTimeUtils.getCurrentTime()
                 val updatedNote = Note(noteTitle, noteDescription, currentTime)
                 updatedNote.taskId = note.taskId
+                updatedNote.isFavorite = note.isFavorite
                 viewModal.updateNote(updatedNote)
             }
         } else if (isUpdateNote && noteTitle.isEmpty() && noteDescription.isEmpty()) {

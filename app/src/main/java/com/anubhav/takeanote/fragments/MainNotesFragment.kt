@@ -1,44 +1,41 @@
 package com.anubhav.takeanote.fragments
 
-import android.app.ActivityOptions
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.transition.TransitionManager
 import android.view.*
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.SearchView
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.anubhav.commonutility.ItemSwipeHelper
+import androidx.recyclerview.widget.RecyclerView
+import com.anubhav.commonutility.ItemSwipeHelperList
 import com.anubhav.commonutility.customfont.FontUtils
 import com.anubhav.takeanote.R
 import com.anubhav.takeanote.activities.AddEditNoteActivity
+import com.anubhav.takeanote.activities.FavoriteNotesActivity
 import com.anubhav.takeanote.adapters.NoteAdapter
 import com.anubhav.takeanote.adapters.NoteItemClickInterface
 import com.anubhav.takeanote.database.model.Note
 import com.anubhav.takeanote.databinding.FragMainNotesBinding
 import com.anubhav.takeanote.interfaces.RvItemSwipeListener
 import com.anubhav.takeanote.utils.GlobalData
+import com.anubhav.takeanote.utils.HelperMethod
 import com.anubhav.takeanote.viewmodel.NoteViewModal
-import com.google.android.material.color.MaterialColors
-import com.google.android.material.transition.platform.MaterialArcMotion
-import com.google.android.material.transition.platform.MaterialContainerTransform
+import com.google.android.material.snackbar.Snackbar
 
 
 private const val ARG_PARAM1 = "param1"
@@ -111,16 +108,8 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         // on below line we are calling all notes method
         // from our view modal class to observer the changes on list.
         viewModal.allNotes.observe(viewLifecycleOwner) { list ->
-            list?.let {
-                // on below line we are updating our list.
-                binding.layNotFound.rootView.visibility =
-                    if (it.isEmpty()) View.VISIBLE else View.GONE
-                noteRVAdapter.submitList(it)
-            }
+            list?.let { updateRecyclerAdapter(it) }
         }
-
-        val itemTouchHelper = ItemTouchHelper(ItemSwipeHelper(itemSwipeListener, context))
-        itemTouchHelper.attachToRecyclerView(binding.notesRV)
     }
 
     private fun initSearchView() {
@@ -139,7 +128,7 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         searchView.maxWidth = Int.MAX_VALUE
 
         /*Expanding the search view */
-        searchView.isIconified = false
+        //searchView.isIconified = false
         searchView.setIconifiedByDefault(false)
 
         /* Code for changing the text color and hint color for the search view */
@@ -147,6 +136,9 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
             searchView.findViewById(androidx.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
         searchAutoComplete.setTextColor(resources.getColor(R.color.fontcoloreditext))
         searchAutoComplete.setHintTextColor(resources.getColor(R.color.fontcoloreditexthint))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            searchAutoComplete.setTextCursorDrawable(R.drawable.cursor_search)
+        }
 
         /*Code for changing the search icon */
         val searchIcon =
@@ -163,17 +155,13 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 val list = viewModal.searchNotes(query)
-                binding.layNotFound.rootView.visibility =
-                    if (list.isEmpty()) View.VISIBLE else View.GONE
-                noteRVAdapter.submitList(list)
+                updateRecyclerAdapter(list)
                 return true
             }
 
             override fun onQueryTextChange(query: String?): Boolean {
                 val list = viewModal.searchNotes(query)
-                binding.layNotFound.rootView.visibility =
-                    if (list.isEmpty()) View.VISIBLE else View.GONE
-                noteRVAdapter.submitList(list)
+                updateRecyclerAdapter(list)
                 return true
             }
         })
@@ -184,28 +172,48 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         viewModal.updateNotes()
     }
 
+    private fun updateRecyclerAdapter(list: List<Note>) {
+        // on below line we are updating our list.
+        binding.layNotFound.rootView.visibility =
+            if (list.isEmpty()) View.VISIBLE else View.GONE
+        noteRVAdapter.submitList(list)
+
+        val itemTouchHelper = ItemTouchHelper(
+            ItemSwipeHelperList(
+                context,
+                list,
+                itemSwipeListener,
+                HelperMethod.dpToPx(requireContext(), 18).toFloat()
+            )
+        )
+        itemTouchHelper.attachToRecyclerView(null)
+        itemTouchHelper.attachToRecyclerView(binding.notesRV)
+    }
+
     override fun onNoteClick(view: View, note: Note) {
         AddEditNoteActivity.start(requireActivity(), view, note, true)
     }
 
     override fun onNoteDeleteClick(note: Note) {
-        showNoteDeleteDialog(note)
     }
 
     private var itemSwipeListener: RvItemSwipeListener = object : RvItemSwipeListener {
-        override fun onItemDelete(position: Int) {
+        override fun onItemLeftSwipe(viewHolder: RecyclerView.ViewHolder, position: Int) {
             val note: Note = noteRVAdapter.currentList[position]
             showNoteDeleteDialog(note)
         }
 
-        override fun onItemFavorite(position: Int) {
+        override fun onItemRightSwipe(viewHolder: RecyclerView.ViewHolder, position: Int) {
+            val note: Note = noteRVAdapter.currentList[position]
+            showSavedSnackbar(!note.isFavorite)
+            viewModal.updateFavoriteNote(note)
         }
     }
 
     private fun showNoteDeleteDialog(note: Note) {
         val dialog = Dialog(requireContext(), R.style.CustomDialogTheme)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(false)
+        dialog.setCancelable(true)
         dialog.setContentView(R.layout.dialog_delete_note)
 
         FontUtils.setFont(context, dialog.findViewById(R.id.root_view))
@@ -216,18 +224,92 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         textDesc.setText(R.string.confirm_delete_desc)
 
         val declineDialogButton = dialog.findViewById<Button>(R.id.bt_decline)
-        declineDialogButton.setOnClickListener {
-            noteRVAdapter.notifyDataSetChanged()
-            dialog.dismiss()
-        }
+        declineDialogButton.setOnClickListener { dialog.dismiss() }
 
         val confirmDialogButton = dialog.findViewById<Button>(R.id.bt_confirm)
         confirmDialogButton.setOnClickListener {
             viewModal.deleteNote(note)
-            Toast.makeText(context, "${note.noteTitle} Deleted", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
+            showDeleteSnackbar(note)
         }
         dialog.show()
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun showDeleteSnackbar(note: Note) {
+        val snackbar = Snackbar.make(binding.rootView, "", Snackbar.LENGTH_LONG)
+
+        val customSnackView: View = layoutInflater.inflate(R.layout.custom_snackbar_view, null)
+
+        snackbar.view.setBackgroundColor(Color.TRANSPARENT)
+
+        // now change the layout of the snackbar
+        val snackbarLayout = snackbar.view as Snackbar.SnackbarLayout
+
+        // set padding of the all corners as 0
+        snackbarLayout.setPadding(0, 0, 0, 0)
+
+        FontUtils.setFont(requireContext(), customSnackView.findViewById(R.id.root_view))
+
+        val tvTitle = customSnackView.findViewById<TextView>(R.id.tv_title)
+        val tvDesc = customSnackView.findViewById<TextView>(R.id.tv_desc)
+        tvTitle.text = "Deleted"
+        tvDesc.text = "This note going to delete!"
+
+        val imgView = customSnackView.findViewById<ImageView>(R.id.imageView)
+        imgView.setImageResource(R.drawable.ic_round_delete_outline_24)
+        imgView.imageTintList =
+            ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red_500))
+
+        val btnAction = customSnackView.findViewById<Button>(R.id.action_button)
+        btnAction.text = "Undo"
+        btnAction.setOnClickListener {
+            viewModal.addNote(note)
+            snackbar.dismiss()
+        }
+
+        snackbarLayout.addView(customSnackView, 0)
+        snackbar.show()
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun showSavedSnackbar(isAddedToFavorite: Boolean) {
+        val snackbar = Snackbar.make(binding.rootView, "", Snackbar.LENGTH_LONG)
+
+        val customSnackView: View = layoutInflater.inflate(R.layout.custom_snackbar_view, null)
+
+        snackbar.view.setBackgroundColor(Color.TRANSPARENT)
+
+        // now change the layout of the snackbar
+        val snackbarLayout = snackbar.view as Snackbar.SnackbarLayout
+
+        // set padding of the all corners as 0
+        snackbarLayout.setPadding(0, 0, 0, 0)
+
+        FontUtils.setFont(requireContext(), customSnackView.findViewById(R.id.root_view))
+
+        val tvTitle = customSnackView.findViewById<TextView>(R.id.tv_title)
+        tvTitle.text = if (isAddedToFavorite) "Added to favorites." else "Removed from favorites."
+
+        val tvDesc = customSnackView.findViewById<TextView>(R.id.tv_desc)
+        tvDesc.visibility = View.GONE
+
+        val imgView = customSnackView.findViewById<ImageView>(R.id.imageView)
+        imgView.setImageResource(R.drawable.ic_round_favorite_border_24)
+        imgView.imageTintList =
+            ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
+
+        val btnAction = customSnackView.findViewById<Button>(R.id.action_button)
+        btnAction.text = if (isAddedToFavorite) "Favorites" else "OK"
+        btnAction.setOnClickListener {
+            snackbar.dismiss()
+            if (isAddedToFavorite) {
+                startActivity(Intent(requireContext(), FavoriteNotesActivity::class.java))
+            }
+        }
+
+        snackbarLayout.addView(customSnackView, 0)
+        snackbar.show()
     }
 
 }

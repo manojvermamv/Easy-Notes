@@ -19,6 +19,7 @@ class NoteViewModal(application: Application) : AndroidViewModel(application) {
 
     // Public access - immutableLiveData
     var allNotes: LiveData<List<Note>>
+    var allFavoriteNotes: LiveData<List<Note>>
 
     private val repository: NoteRepository
 
@@ -28,6 +29,7 @@ class NoteViewModal(application: Application) : AndroidViewModel(application) {
         val dao = AppDatabase.getDatabase(application).getNoteDao()
         repository = NoteRepository.getInstance(dao)
         allNotes = repository.allNotes
+        allFavoriteNotes = repository.allFavoriteNotes
     }
 
     private fun getAllNotes(): List<Note> {
@@ -36,6 +38,7 @@ class NoteViewModal(application: Application) : AndroidViewModel(application) {
 
     fun updateNotes() = viewModelScope.launch(Dispatchers.IO) {
         allNotes = repository.allNotes
+        allFavoriteNotes = repository.allFavoriteNotes
     }
 
     // on below line we are creating a new method for deleting a note. In this we are
@@ -62,6 +65,11 @@ class NoteViewModal(application: Application) : AndroidViewModel(application) {
     // we are calling a method from our repository to add a new note.
     fun addNote(note: Note) = viewModelScope.launch(Dispatchers.IO) {
         repository.insert(note)
+    }
+
+    fun updateFavoriteNote(note: Note) = viewModelScope.launch(Dispatchers.IO) {
+        note.isFavorite = !note.isFavorite
+        repository.update(note)
     }
 
     fun searchNotes(query: String?): List<Note> {
