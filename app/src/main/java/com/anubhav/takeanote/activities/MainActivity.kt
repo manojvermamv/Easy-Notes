@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
 
         binding.imgSettings.setOnClickListener(View.OnClickListener { })
+        setSelectionActionBar(false)
     }
 
     private fun onCreateApp() {
@@ -96,6 +97,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
 
         binding.viewPager.currentItem = 0
+    }
+
+    fun setSelectionActionBar(enable: Boolean) {
+        if (enable) {
+            binding.layTop.visibility = View.GONE
+            binding.layTopSelection.visibility = View.VISIBLE
+        } else {
+            binding.layTop.visibility = View.VISIBLE
+            binding.layTopSelection.visibility = View.GONE
+        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

@@ -1,6 +1,7 @@
 package com.anubhav.takeanote.fragments
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
 import android.app.SearchManager
 import android.content.Context
@@ -26,6 +27,7 @@ import com.anubhav.commonutility.customfont.FontUtils
 import com.anubhav.takeanote.R
 import com.anubhav.takeanote.activities.AddEditNoteActivity
 import com.anubhav.takeanote.activities.FavoriteNotesActivity
+import com.anubhav.takeanote.activities.MainActivity
 import com.anubhav.takeanote.adapters.NoteAdapter
 import com.anubhav.takeanote.adapters.NoteItemClickInterface
 import com.anubhav.takeanote.database.model.Note
@@ -35,7 +37,6 @@ import com.anubhav.takeanote.utils.GlobalData
 import com.anubhav.takeanote.utils.HelperMethod
 import com.anubhav.takeanote.viewmodel.NoteViewModal
 import com.google.android.material.snackbar.Snackbar
-import java.io.File
 
 
 private const val ARG_PARAM1 = "param1"
@@ -199,6 +200,12 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
     }
 
     override fun onItemLongClick(view: View, position: Int, note: Note) {
+        if (!selectModeEnabled) {
+            val activity: Activity = requireActivity()
+            if (activity is MainActivity) {
+                activity.setSelectionActionBar(true)
+            }
+        }
         setSelection(position, note)
     }
 
@@ -215,6 +222,7 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
 
     private fun setSelection(position: Int, note: Note) {
         selectModeEnabled = true
+        noteRVAdapter.selectionMode = true
         note.isSelected = !note.isSelected
         if (selectionList.contains(note)) {
             selectionList.remove(note)
@@ -227,6 +235,7 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
 
     private fun clearSelection() {
         selectModeEnabled = false
+        noteRVAdapter.selectionMode = false
         selectionList.clear()
         val list = noteRVAdapter.currentList
         list.forEach {
@@ -236,13 +245,15 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         onItemSelectionChanged()
     }
 
-    fun selectAll() {
+    // https://bignerdranch.github.io/recyclerview-multiselect/
+    private fun selectAll(selectedAll: Boolean) {
         selectModeEnabled = true
+        noteRVAdapter.selectionMode = true
         selectionList.clear()
         val list = noteRVAdapter.currentList
         list.forEach {
-            it.isSelected = true
-            selectionList.add(it)
+            it.isSelected = selectedAll
+            if (selectedAll) selectionList.add(it)
         }
         noteRVAdapter.submitList(list)
         onItemSelectionChanged()
@@ -250,6 +261,25 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
 
     private fun onItemSelectionChanged() {
         // here get selection list size
+        val activity: Activity = requireActivity()
+        if (activity is MainActivity) {
+            activity.binding.txtSelectionCount.text =
+                String.format(getString(R.string.selected_item), selectionList.size)
+
+            activity.binding.imgSelectionClose.setOnClickListener {
+                activity.setSelectionActionBar(false)
+                clearSelection()
+            }
+            activity.binding.imgSelectionAll.setOnClickListener {
+                if (noteRVAdapter.currentList.size == selectionList.size) {
+                    activity.binding.imgSelectionAll.isSelected = false
+                    selectAll(false)
+                } else {
+                    activity.binding.imgSelectionAll.isSelected = true
+                    selectAll(true)
+                }
+            }
+        }
     }
 
     private var itemSwipeListener: ItemSwipeHelper.OnSwipeListener =

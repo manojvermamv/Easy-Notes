@@ -53,7 +53,7 @@ class NoteAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is BindViewHolder) {
-            holder.bind(position, getItem(position), noteItemClickInterface)
+            holder.bind(position, getItem(position), noteItemClickInterface, selectionMode)
         }
     }
 
@@ -64,6 +64,12 @@ class NoteAdapter(
         }
         return item.viewType
     }
+
+    var selectionMode: Boolean
+        get() {
+            return false
+        }
+        set(v) {}
 
 }
 
@@ -77,7 +83,12 @@ class BindViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     // on below line we are creating an initializing all our
     // variables which we have added in layout file.
-    fun bind(position: Int, note: Note, noteItemClickInterface: NoteItemClickInterface) {
+    fun bind(
+        position: Int,
+        note: Note,
+        noteItemClickInterface: NoteItemClickInterface,
+        selectionMode: Boolean
+    ) {
         binding.setVariable(BR.position, position)
         binding.setVariable(BR.note, note)
         binding.setVariable(BR.onNoteItemClick, noteItemClickInterface)
@@ -99,9 +110,14 @@ class BindViewHolder(
             return@setOnLongClickListener true
         }
 
-        ivSelection.isSelected = note.isSelected
-        ivSelection.setOnClickListener {
-            noteItemClickInterface.onItemSelectionClick(ivSelection, position, note)
+        if (selectionMode) {
+            ivSelection.visibility = View.VISIBLE
+            ivSelection.isSelected = note.isSelected
+            ivSelection.setOnClickListener {
+                noteItemClickInterface.onItemSelectionClick(ivSelection, position, note)
+            }
+        } else {
+            ivSelection.visibility = View.GONE
         }
     }
 
