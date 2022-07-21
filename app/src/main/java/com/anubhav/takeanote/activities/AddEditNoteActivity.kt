@@ -30,6 +30,7 @@ import com.google.android.material.color.MaterialColors
 import com.google.android.material.transition.platform.MaterialArcMotion
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
+import org.threeten.bp.OffsetDateTime
 
 class AddEditNoteActivity : AppCompatActivity() {
 
@@ -165,7 +166,7 @@ class AddEditNoteActivity : AppCompatActivity() {
         transform.fitMode = MaterialContainerTransform.FIT_MODE_AUTO
         transform.pathMotion = MaterialArcMotion()
         transform.interpolator = FastOutSlowInInterpolator()
-        transform.duration = 500L
+        transform.duration = 540L
         return transform
     }
 
@@ -175,22 +176,24 @@ class AddEditNoteActivity : AppCompatActivity() {
 
         if (noteTitle.isNotEmpty() || noteDescription.isNotEmpty()) {
             val currentTime: String = DateTimeUtils.getCurrentTime()
+            val currentTimeDate: OffsetDateTime = OffsetDateTime.now()
             if (isUpdateNote) {
                 if (!(noteTitle == note.noteTitle && noteDescription == note.noteDescription)) {
-                    val updatedNote = Note(noteTitle, noteDescription, currentTime)
+                    val updatedNote = Note(noteTitle, noteDescription, currentTime, currentTimeDate)
                     updatedNote.taskId = note.taskId
                     updatedNote.isFavorite = note.isFavorite
                     viewModal.updateNote(updatedNote)
                 }
             } else {
-                viewModal.addNote(Note(noteTitle, noteDescription, currentTime))
+                viewModal.addNote(Note(noteTitle, noteDescription, currentTime, currentTimeDate))
             }
         }
 
         if (isUpdateNote && (noteTitle.isNotEmpty() || noteDescription.isNotEmpty())) {
             if (!(noteTitle == note.noteTitle && noteDescription == note.noteDescription)) {
                 val currentTime: String = DateTimeUtils.getCurrentTime()
-                val updatedNote = Note(noteTitle, noteDescription, currentTime)
+                val currentTimeDate: OffsetDateTime = OffsetDateTime.now()
+                val updatedNote = Note(noteTitle, noteDescription, currentTime, currentTimeDate)
                 updatedNote.taskId = note.taskId
                 updatedNote.isFavorite = note.isFavorite
                 viewModal.updateNote(updatedNote)

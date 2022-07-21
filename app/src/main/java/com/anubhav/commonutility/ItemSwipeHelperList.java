@@ -5,7 +5,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.ColorInt;
@@ -22,7 +21,6 @@ import com.anubhav.takeanote.interfaces.RvItemSwipeListener;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ItemSwipeHelperList extends ItemTouchHelper.SimpleCallback {

@@ -13,7 +13,6 @@ import android.view.*
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -22,7 +21,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.anubhav.commonutility.ItemSwipeHelperList
+import com.anubhav.commonutility.ItemSwipeHelper
 import com.anubhav.commonutility.customfont.FontUtils
 import com.anubhav.takeanote.R
 import com.anubhav.takeanote.activities.AddEditNoteActivity
@@ -30,12 +29,13 @@ import com.anubhav.takeanote.activities.FavoriteNotesActivity
 import com.anubhav.takeanote.adapters.NoteAdapter
 import com.anubhav.takeanote.adapters.NoteItemClickInterface
 import com.anubhav.takeanote.database.model.Note
+import com.anubhav.takeanote.database.model.getEmptyItem
 import com.anubhav.takeanote.databinding.FragMainNotesBinding
-import com.anubhav.takeanote.interfaces.RvItemSwipeListener
 import com.anubhav.takeanote.utils.GlobalData
 import com.anubhav.takeanote.utils.HelperMethod
 import com.anubhav.takeanote.viewmodel.NoteViewModal
 import com.google.android.material.snackbar.Snackbar
+import java.io.File
 
 
 private const val ARG_PARAM1 = "param1"
@@ -108,7 +108,7 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         // on below line we are calling all notes method
         // from our view modal class to observer the changes on list.
         viewModal.allNotes.observe(viewLifecycleOwner) { list ->
-            list?.let { updateRecyclerAdapter(it) }
+            list?.let { updateRecyclerAdapter(it.toMutableList()) }
         }
     }
 
@@ -154,14 +154,12 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         GlobalData.setSearchViewCursor(searchView, R.drawable.cursor_search)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                val list = viewModal.searchNotes(query)
-                updateRecyclerAdapter(list)
+                updateRecyclerAdapter(viewModal.searchNotes(query))
                 return true
             }
 
             override fun onQueryTextChange(query: String?): Boolean {
-                val list = viewModal.searchNotes(query)
-                updateRecyclerAdapter(list)
+                updateRecyclerAdapter(viewModal.searchNotes(query))
                 return true
             }
         })
@@ -172,43 +170,107 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         viewModal.updateNotes()
     }
 
-    private fun updateRecyclerAdapter(list: List<Note>) {
+    private fun updateRecyclerAdapter(itemList: MutableList<Note>) {
+        if (itemList.isEmpty()) {
+            itemList.add(getEmptyItem())
+        }
+
         // on below line we are updating our list.
-        binding.layNotFound.rootView.visibility =
-            if (list.isEmpty()) View.VISIBLE else View.GONE
-        noteRVAdapter.submitList(list)
+        noteRVAdapter.submitList(itemList)
 
         val itemTouchHelper = ItemTouchHelper(
-            ItemSwipeHelperList(
-                context,
-                list,
-                itemSwipeListener,
-                HelperMethod.dpToPx(requireContext(), 18).toFloat()
+            ItemSwipeHelper(
+                context, itemSwipeListener, HelperMethod.dpToPx(context, 18).toFloat()
             )
         )
         itemTouchHelper.attachToRecyclerView(null)
         itemTouchHelper.attachToRecyclerView(binding.notesRV)
     }
 
-    override fun onNoteClick(view: View, note: Note) {
-        AddEditNoteActivity.start(requireActivity(), view, note, true)
-    }
-
-    override fun onNoteDeleteClick(note: Note) {
-    }
-
-    private var itemSwipeListener: RvItemSwipeListener = object : RvItemSwipeListener {
-        override fun onItemLeftSwipe(viewHolder: RecyclerView.ViewHolder, position: Int) {
-            val note: Note = noteRVAdapter.currentList[position]
-            showNoteDeleteDialog(note)
-        }
-
-        override fun onItemRightSwipe(viewHolder: RecyclerView.ViewHolder, position: Int) {
-            val note: Note = noteRVAdapter.currentList[position]
-            showSavedSnackbar(!note.isFavorite)
-            viewModal.updateFavoriteNote(note)
+    override fun onItemClick(view: View, position: Int, note: Note) {
+        if (selectModeEnabled) {
+            setSelection(position, note)
+        } else {
+            AddEditNoteActivity.start(requireActivity(), view, note, true)
         }
     }
+
+    override fun onItemDeleteClick(position: Int, note: Note) {
+    }
+
+    override fun onItemLongClick(view: View, position: Int, note: Note) {
+        setSelection(position, note)
+    }
+
+    override fun onItemSelectionClick(view: View, position: Int, note: Note) {
+        setSelection(position, note)
+    }
+
+    /**
+     * custom method for multi items selection
+     * */
+
+    var selectModeEnabled: Boolean = false
+    var selectionList: MutableList<Note> = mutableListOf()
+
+    private fun setSelection(position: Int, note: Note) {
+        selectModeEnabled = true
+        note.isSelected = !note.isSelected
+        if (selectionList.contains(note)) {
+            selectionList.remove(note)
+        } else {
+            selectionList.add(note)
+        }
+        noteRVAdapter.notifyItemChanged(position)
+        onItemSelectionChanged()
+    }
+
+    private fun clearSelection() {
+        selectModeEnabled = false
+        selectionList.clear()
+        val list = noteRVAdapter.currentList
+        list.forEach {
+            it.isSelected = false
+        }
+        noteRVAdapter.submitList(list)
+        onItemSelectionChanged()
+    }
+
+    fun selectAll() {
+        selectModeEnabled = true
+        selectionList.clear()
+        val list = noteRVAdapter.currentList
+        list.forEach {
+            it.isSelected = true
+            selectionList.add(it)
+        }
+        noteRVAdapter.submitList(list)
+        onItemSelectionChanged()
+    }
+
+    private fun onItemSelectionChanged() {
+        // here get selection list size
+    }
+
+    private var itemSwipeListener: ItemSwipeHelper.OnSwipeListener =
+        object : ItemSwipeHelper.OnSwipeListener {
+            override fun onItemLeftSwipe(viewHolder: RecyclerView.ViewHolder, position: Int) {
+                val note: Note = noteRVAdapter.currentList[position]
+                showNoteDeleteDialog(note)
+            }
+
+            override fun onItemRightSwipe(viewHolder: RecyclerView.ViewHolder, position: Int) {
+                val note: Note = noteRVAdapter.currentList[position]
+                showSavedSnackbar(!note.isFavorite)
+                viewModal.updateFavoriteNote(note)
+            }
+        }
+
+
+    /**
+     * methods for dialogs and ui operations
+     *
+     * */
 
     private fun showNoteDeleteDialog(note: Note) {
         val dialog = Dialog(requireContext(), R.style.CustomDialogTheme)

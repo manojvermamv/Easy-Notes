@@ -42,12 +42,6 @@
                     android:overScrollMode="never"
                     tools:listitem="@layout/note_rv_item" />
 
-                <include
-                    android:id="@+id/lay_not_found"
-                    layout="@layout/item_not_found"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
             </RelativeLayout>
 
         </RelativeLayout>

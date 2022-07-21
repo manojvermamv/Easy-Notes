@@ -7,10 +7,10 @@ import android.text.SpannableString
 import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.anubhav.commonutility.customfont.FontUtils
 import com.anubhav.takeanote.BR
 import com.anubhav.takeanote.R
+import com.anubhav.takeanote.base.EmptyViewHolder
 import com.anubhav.takeanote.database.model.Note
 import com.anubhav.takeanote.utils.DateTimeUtils
 import java.util.*
@@ -28,11 +29,11 @@ class NoteAdapter(
     private val context: Context,
     private val noteItemClickInterface: NoteItemClickInterface
 ) :
-    ListAdapter<Note, BindViewHolder>(NoteDiffUtil()) {
+    ListAdapter<Note, RecyclerView.ViewHolder>(NoteDiffUtil()) {
 
     private val viewTypeToLayoutId: MutableMap<Int, Int> = mutableMapOf()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding: ViewDataBinding = DataBindingUtil.inflate(
             LayoutInflater.from(context),
             viewTypeToLayoutId[viewType] ?: 0,
@@ -40,15 +41,20 @@ class NoteAdapter(
             false
         )
 
-        //if (viewType == R.layout.item_not_found) {
-        //    return EmptyViewHolder(binding)
-        //}
+        // set font style
         FontUtils.setFont(context, binding.root as ViewGroup)
+
+        // set view holder according viewType
+        if (viewType == R.layout.item_not_found) {
+            return EmptyViewHolder(binding.root)
+        }
         return BindViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: BindViewHolder, position: Int) {
-        holder.bind(getItem(position), noteItemClickInterface)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is BindViewHolder) {
+            holder.bind(position, getItem(position), noteItemClickInterface)
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -63,13 +69,16 @@ class NoteAdapter(
 
 class BindViewHolder(
     private val binding: ViewDataBinding,
+    private val rootView: ViewGroup = binding.root.findViewById(R.id.root_view),
     private val tvTitle: TextView = binding.root.findViewById(R.id.idTVNote),
     private val tvDesc: TextView = binding.root.findViewById(R.id.idTVNoteDesc),
-    private val tvDate: TextView = binding.root.findViewById(R.id.idTVDate)
+    private val tvDate: TextView = binding.root.findViewById(R.id.idTVDate),
+    private val ivSelection: ImageView = binding.root.findViewById(R.id.iv_selection)
 ) : RecyclerView.ViewHolder(binding.root) {
     // on below line we are creating an initializing all our
     // variables which we have added in layout file.
-    fun bind(note: Note, noteItemClickInterface: NoteItemClickInterface) {
+    fun bind(position: Int, note: Note, noteItemClickInterface: NoteItemClickInterface) {
+        binding.setVariable(BR.position, position)
         binding.setVariable(BR.note, note)
         binding.setVariable(BR.onNoteItemClick, noteItemClickInterface)
 
@@ -80,6 +89,20 @@ class BindViewHolder(
 
         setHighLightedText(tvTitle, note.searchQuery)
         setHighLightedText(tvDesc, note.searchQuery)
+
+        rootView.setOnClickListener {
+            noteItemClickInterface.onItemClick(rootView, position, note)
+        }
+
+        rootView.setOnLongClickListener {
+            noteItemClickInterface.onItemLongClick(rootView, position, note)
+            return@setOnLongClickListener true
+        }
+
+        ivSelection.isSelected = note.isSelected
+        ivSelection.setOnClickListener {
+            noteItemClickInterface.onItemSelectionClick(ivSelection, position, note)
+        }
     }
 
     private fun setHighLightedText(tv: TextView, textToHighlight: String) {
@@ -139,6 +162,8 @@ class NoteDiffUtil : DiffUtil.ItemCallback<Note>() {
 }
 
 interface NoteItemClickInterface {
-    fun onNoteClick(view: View, note: Note);
-    fun onNoteDeleteClick(note: Note)
+    fun onItemClick(view: View, position: Int, note: Note);
+    fun onItemLongClick(view: View, position: Int, note: Note);
+    fun onItemSelectionClick(view: View, position: Int, note: Note);
+    fun onItemDeleteClick(position: Int, note: Note)
 }

@@ -21,13 +21,13 @@ interface NoteDao {
     @Query("DELETE FROM notesTable")
     suspend fun deleteAll()
 
-    @Query("SELECT * FROM notesTable ORDER BY taskId DESC")
+    @Query("SELECT * FROM notesTable ORDER BY timeStampDate DESC")
     fun getAllNotes(): LiveData<List<Note>>
 
-    @Query("SELECT * FROM notesTable WHERE isFavorite = 1 ORDER BY taskId DESC")
+    @Query("SELECT * FROM notesTable WHERE isFavorite = 1 ORDER BY timeStampDate DESC")
     fun getAllFavoriteNotes(): LiveData<List<Note>>
 
-    @Query("SELECT * FROM notesTable WHERE title LIKE '%' || :query || '%' AND description LIKE '%' || :query || '%'")
+    @Query("SELECT * FROM notesTable WHERE title LIKE :query AND description LIKE :query ORDER BY timeStampDate DESC")
     fun searchNotes(query: String): LiveData<List<Note>>
 
 }

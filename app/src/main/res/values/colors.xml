@@ -4,7 +4,7 @@
     <color name="colorAccent">#fedb41</color>
     <color name="colorPrimary">#4285F4</color>
     <color name="colorPrimaryDark">@color/grey_3</color>
-    <color name="colorPrimaryLight">@color/grey_3</color>
+    <color name="colorPrimaryLight">#ededed</color>
 
     <color name="colorAccentDark">#ffc15f</color>
     <color name="colorAccentDark25">#40FFC15F</color>

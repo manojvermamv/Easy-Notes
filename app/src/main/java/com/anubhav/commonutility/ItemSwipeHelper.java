@@ -24,8 +24,8 @@ public class ItemSwipeHelper extends ItemTouchHelper.SimpleCallback {
     private GradientDrawable background;
 
     @DrawableRes
-    int rightDrawableRes = R.drawable.ic_round_favorite_border_24;
-    int leftDrawableRes = R.drawable.ic_round_delete_outline_24;
+    int rightDrawableRes = R.drawable.ic_round_favorite_border_24_white;
+    int leftDrawableRes = R.drawable.ic_round_delete_outline_24_white;
     @ColorRes
     int rightColorRes = R.color.colorPrimary;
     int leftColorRes = R.color.red_500;

@@ -25,6 +25,7 @@ import com.anubhav.takeanote.R
 import com.anubhav.takeanote.adapters.NoteAdapter
 import com.anubhav.takeanote.adapters.NoteItemClickInterface
 import com.anubhav.takeanote.database.model.Note
+import com.anubhav.takeanote.database.model.getEmptyItem
 import com.anubhav.takeanote.databinding.ActivityFavoriteNotesBinding
 import com.anubhav.takeanote.utils.HelperMethod
 import com.anubhav.takeanote.viewmodel.NoteViewModal
@@ -83,10 +84,13 @@ class FavoriteNotesActivity : AppCompatActivity(), NoteItemClickInterface {
         // from our view modal class to observer the changes on list.
         viewModal.allFavoriteNotes.observe(this) { list ->
             list?.let {
+                val itemList: MutableList<Note> = list.toMutableList()
+                if (itemList.isEmpty()) {
+                    itemList.add(getEmptyItem())
+                }
+
                 // on below line we are updating our list.
-                binding.layNotFound.rootView.visibility =
-                    if (it.isEmpty()) View.VISIBLE else View.GONE
-                noteRVAdapter.submitList(it)
+                noteRVAdapter.submitList(itemList)
             }
         }
 
@@ -103,11 +107,17 @@ class FavoriteNotesActivity : AppCompatActivity(), NoteItemClickInterface {
         viewModal.updateNotes()
     }
 
-    override fun onNoteClick(view: View, note: Note) {
+    override fun onItemClick(view: View, position: Int, note: Note) {
         AddEditNoteActivity.start(this, view, note, true)
     }
 
-    override fun onNoteDeleteClick(note: Note) {
+    override fun onItemDeleteClick(position: Int, note: Note) {
+    }
+
+    override fun onItemLongClick(view: View, position: Int, note: Note) {
+    }
+
+    override fun onItemSelectionClick(view: View, position: Int, note: Note) {
     }
 
     private var onItemSwipeListener: ItemSwipeHelper.OnSwipeListener =

@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import com.anubhav.takeanote.database.AppDatabase
 import com.anubhav.takeanote.database.model.Note
 import com.anubhav.takeanote.database.model.NoteRepository
+import com.anubhav.takeanote.database.model.getEmptyItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
@@ -72,7 +73,7 @@ class NoteViewModal(application: Application) : AndroidViewModel(application) {
         repository.update(note)
     }
 
-    fun searchNotes(query: String?): List<Note> {
+    fun searchNotes(query: String?): MutableList<Note> {
         val list: List<Note> = getAllNotes()
         val filterList = mutableListOf<Note>()
 
@@ -90,8 +91,8 @@ class NoteViewModal(application: Application) : AndroidViewModel(application) {
                 }
             }
         }
-        filterList.sortedBy { it.timeStamp }
-        return filterList.toList()
+        //filterList.sortedBy { it.timeStampDate }
+        return filterList
     }
 
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- not selected drawable -->
+    <item android:drawable="@drawable/ic_unchecked" android:state_focused="false" android:state_pressed="false" android:state_selected="false" />
+
+    <!-- selected drawable -->
+    <item android:drawable="@drawable/ic_checked" android:state_selected="true" />
+
+</selector>
