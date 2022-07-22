@@ -14,7 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.anubhav.takeanote.R;
+import com.anubhav.notedown.R;
 
 import org.jetbrains.annotations.NotNull;
 

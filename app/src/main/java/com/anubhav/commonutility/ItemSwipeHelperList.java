@@ -15,9 +15,9 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.anubhav.takeanote.R;
-import com.anubhav.takeanote.database.model.Note;
-import com.anubhav.takeanote.interfaces.RvItemSwipeListener;
+import com.anubhav.notedown.R;
+import com.anubhav.notedown.database.model.Note;
+import com.anubhav.notedown.interfaces.RvItemSwipeListener;
 
 import org.jetbrains.annotations.NotNull;
 

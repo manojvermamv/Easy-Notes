@@ -1,7 +1,5 @@
 <resources>
-    <string name="app_name">Take A Note</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_name">NoteDown</string>
 
     <string name="take_pic_btn_label">Take photos</string>
     <string name="front_picture">Front Camera Picture</string>

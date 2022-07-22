@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
 
-import com.anubhav.takeanote.utils.Global;
+import com.anubhav.notedown.utils.Global;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 

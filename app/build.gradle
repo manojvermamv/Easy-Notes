@@ -12,7 +12,7 @@ android {
         release {
             storeFile file('../keystore.jks')
             storePassword "74477447"
-            keyAlias "takeanote"
+            keyAlias "notedown"
             keyPassword "74477447"
         }
     }
@@ -65,6 +65,10 @@ android {
     }
 }
 
+kapt {
+    generateStubs = true
+}
+
 dependencies {
     implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
     implementation project(path: ':permissionschecker')
@@ -83,7 +87,7 @@ dependencies {
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutines"
 
     // data binding
-    kapt 'androidx.databinding:databinding-compiler-common:3.4.0'
+    kapt "com.android.databinding:compiler:$android_plugin_version"
 
     // UI
     implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintLayoutVersion"
@@ -99,6 +103,8 @@ dependencies {
     // Images Loading
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
+    implementation 'com.bignerdranch.android:recyclerview-multiselect:0.2'
 
     // google
     implementation 'com.google.code.gson:gson:2.9.0'

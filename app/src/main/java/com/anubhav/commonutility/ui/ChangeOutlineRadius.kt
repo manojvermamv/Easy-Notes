@@ -13,7 +13,7 @@ import android.util.Property
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
-import com.anubhav.takeanote.R
+import com.anubhav.notedown.R
 
 /**
  * Transitions a view from [startRadius] to [endRadius] through a [ViewOutlineProvider].

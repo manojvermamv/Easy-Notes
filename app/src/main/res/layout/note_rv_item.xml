@@ -14,11 +14,11 @@
 
         <variable
             name="note"
-            type="com.anubhav.takeanote.database.model.Note" />
+            type="com.anubhav.notedown.database.model.Note" />
 
         <variable
             name="onNoteItemClick"
-            type="com.anubhav.takeanote.adapters.NoteItemClickInterface" />
+            type="com.anubhav.notedown.adapters.NoteItemClickInterface" />
 
     </data>
 
