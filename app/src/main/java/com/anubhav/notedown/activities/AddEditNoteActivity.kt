@@ -94,8 +94,8 @@ class AddEditNoteActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_add_edit_note)
         //excludeStatusAndNavBarFromTransition(window)
         GlobalData.setStatusBarFullScreen(this)
-
         setViewHeight(binding.topView)
+
         FontUtils.setFont(this, binding.root as ViewGroup)
 
         // on below line we are getting data passed via an intent.

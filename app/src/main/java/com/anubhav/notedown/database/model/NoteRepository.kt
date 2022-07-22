@@ -33,6 +33,10 @@ class NoteRepository(private val noteDao: NoteDao) {
         noteDao.insert(note)
     }
 
+    suspend fun insertItemList(list: List<Note>) {
+        noteDao.insertItemList(list)
+    }
+
     // on below line we are creating a delete method
     // for deleting our note from database.
     suspend fun delete(note: Note) {

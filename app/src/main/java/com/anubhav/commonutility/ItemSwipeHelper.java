@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.ColorInt;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ItemSwipeHelper extends ItemTouchHelper.SimpleCallback {
 
+    private static final String TAG = ItemSwipeHelper.class.getSimpleName();
     private final Context context;
     private GradientDrawable background;
 
@@ -66,6 +68,18 @@ public class ItemSwipeHelper extends ItemTouchHelper.SimpleCallback {
         this.leftDrawableRes = leftDrawable;
         this.rightColorRes = rightColor;
         this.leftColorRes = leftColor;
+    }
+
+    @Override
+    public boolean isItemViewSwipeEnabled() {
+        return super.isItemViewSwipeEnabled();
+    }
+
+    @Override
+    public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+        // Check here whatever you want, return 0 if you want disable swipe.
+        if (viewHolder.getItemViewType() == R.layout.item_not_found) return 0;
+        return super.getMovementFlags(recyclerView, viewHolder);
     }
 
     @Override
@@ -182,8 +196,7 @@ public class ItemSwipeHelper extends ItemTouchHelper.SimpleCallback {
 
         background = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{getColor(leftColorRes), getColor(leftColorRes)});
 
-        background.setBounds(itemView.getRight() + ((int) dX) - backgroundCornerOffset,
-                itemView.getTop(), itemView.getRight(), itemView.getBottom());
+        background.setBounds(itemView.getRight() + ((int) dX) - backgroundCornerOffset, itemView.getTop(), itemView.getRight(), itemView.getBottom());
 
         background.setCornerRadii(new float[]{0f, 0f, backgroundCornerRadius, backgroundCornerRadius, backgroundCornerRadius, backgroundCornerRadius, 0f, 0f});
 
@@ -205,8 +218,7 @@ public class ItemSwipeHelper extends ItemTouchHelper.SimpleCallback {
 
         background = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{getColor(rightColorRes), getColor(rightColorRes)});
 
-        background.setBounds(itemView.getLeft(), itemView.getTop(),
-                itemView.getRight() + ((int) dX) - backgroundCornerOffset, itemView.getBottom());
+        background.setBounds(itemView.getLeft(), itemView.getTop(), itemView.getRight() + ((int) dX) - backgroundCornerOffset, itemView.getBottom());
 
         background.setCornerRadii(new float[]{backgroundCornerRadius, backgroundCornerRadius, 0f, 0f, 0f, 0f, backgroundCornerRadius, backgroundCornerRadius});
 

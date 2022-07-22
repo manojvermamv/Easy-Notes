@@ -10,6 +10,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.*
 import android.widget.Button
 import android.widget.ImageView
@@ -48,8 +49,8 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
 
     // on below line we are creating a variable
     // for our recycler view, exit text, button and viewModel.
-    private lateinit var viewModal: NoteViewModal
-    private lateinit var noteRVAdapter: NoteAdapter
+    lateinit var viewModal: NoteViewModal
+    lateinit var noteRVAdapter: NoteAdapter
 
     companion object {
         @JvmStatic
@@ -113,6 +114,8 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         }
     }
 
+    private lateinit var searchAutoComplete: SearchView.SearchAutoComplete
+
     private fun initSearchView() {
         val imageTintColor: ColorStateList =
             ColorStateList.valueOf(
@@ -133,8 +136,7 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         searchView.setIconifiedByDefault(false)
 
         /* Code for changing the text color and hint color for the search view */
-        val searchAutoComplete =
-            searchView.findViewById(androidx.appcompat.R.id.search_src_text) as SearchView.SearchAutoComplete
+        searchAutoComplete = searchView.findViewById(androidx.appcompat.R.id.search_src_text)
         searchAutoComplete.setTextColor(resources.getColor(R.color.fontcoloreditext))
         searchAutoComplete.setHintTextColor(resources.getColor(R.color.fontcoloreditexthint))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -155,11 +157,13 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         GlobalData.setSearchViewCursor(searchView, R.drawable.cursor_search)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
+                longClickEnabled = TextUtils.isEmpty(query)
                 updateRecyclerAdapter(viewModal.searchNotes(query))
                 return true
             }
 
             override fun onQueryTextChange(query: String?): Boolean {
+                longClickEnabled = TextUtils.isEmpty(query)
                 updateRecyclerAdapter(viewModal.searchNotes(query))
                 return true
             }
@@ -171,115 +175,25 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         viewModal.updateNotes()
     }
 
+    override fun onDestroyView() {
+        viewModal.resetNoteState()
+        super.onDestroyView()
+    }
+
     private fun updateRecyclerAdapter(itemList: MutableList<Note>) {
         if (itemList.isEmpty()) {
             itemList.add(getEmptyItem())
         }
-
         // on below line we are updating our list.
         noteRVAdapter.submitList(itemList)
 
+        // attach swipe helper to recycler view
         val itemTouchHelper = ItemTouchHelper(
             ItemSwipeHelper(
                 context, itemSwipeListener, HelperMethod.dpToPx(context, 18).toFloat()
             )
         )
-        itemTouchHelper.attachToRecyclerView(null)
         itemTouchHelper.attachToRecyclerView(binding.notesRV)
-    }
-
-    override fun onItemClick(view: View, position: Int, note: Note) {
-        if (selectModeEnabled) {
-            setSelection(position, note)
-        } else {
-            AddEditNoteActivity.start(requireActivity(), view, note, true)
-        }
-    }
-
-    override fun onItemDeleteClick(position: Int, note: Note) {
-    }
-
-    override fun onItemLongClick(view: View, position: Int, note: Note) {
-        if (!selectModeEnabled) {
-            val activity: Activity = requireActivity()
-            if (activity is MainActivity) {
-                activity.setSelectionActionBar(true)
-            }
-        }
-        setSelection(position, note)
-    }
-
-    override fun onItemSelectionClick(view: View, position: Int, note: Note) {
-        setSelection(position, note)
-    }
-
-    /**
-     * custom method for multi items selection
-     * */
-
-    var selectModeEnabled: Boolean = false
-    var selectionList: MutableList<Note> = mutableListOf()
-
-    private fun setSelection(position: Int, note: Note) {
-        selectModeEnabled = true
-        noteRVAdapter.selectionMode = true
-        note.isSelected = !note.isSelected
-        if (selectionList.contains(note)) {
-            selectionList.remove(note)
-        } else {
-            selectionList.add(note)
-        }
-        noteRVAdapter.notifyItemChanged(position)
-        onItemSelectionChanged()
-    }
-
-    private fun clearSelection() {
-        selectModeEnabled = false
-        noteRVAdapter.selectionMode = false
-        selectionList.clear()
-        val list = noteRVAdapter.currentList
-        list.forEach {
-            it.isSelected = false
-        }
-        noteRVAdapter.submitList(list)
-        onItemSelectionChanged()
-    }
-
-    // https://bignerdranch.github.io/recyclerview-multiselect/
-    private fun selectAll(selectedAll: Boolean) {
-        selectModeEnabled = true
-        noteRVAdapter.selectionMode = true
-        selectionList.clear()
-        val list = noteRVAdapter.currentList
-        list.forEach {
-            it.isSelected = selectedAll
-            if (selectedAll) selectionList.add(it)
-        }
-        noteRVAdapter.submitList(list)
-        onItemSelectionChanged()
-    }
-
-    private fun onItemSelectionChanged() {
-        // here get selection list size
-        val activity: Activity = requireActivity()
-        if (activity is MainActivity) {
-            activity.binding.txtSelectionCount.text =
-                String.format(getString(R.string.selected_item), selectionList.size)
-
-            activity.binding.imgSelectionClose.setOnClickListener {
-                activity.setSelectionActionBar(false)
-                clearSelection()
-            }
-            activity.binding.imgSelectionAll.setOnClickListener {
-                if (noteRVAdapter.currentList.size == selectionList.size) {
-                    activity.binding.imgSelectionAll.isSelected = false
-                    selectAll(false)
-                } else {
-                    activity.binding.imgSelectionAll.isSelected = true
-                    selectAll(true)
-                }
-            }
-        }
     }
 
     private var itemSwipeListener: ItemSwipeHelper.OnSwipeListener =
@@ -296,6 +210,110 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
             }
         }
 
+
+    override fun onItemClick(view: View, position: Int, note: Note) {
+        if (noteRVAdapter.selectionMode) {
+            setSelection(position, note)
+        } else {
+            AddEditNoteActivity.start(requireActivity(), view, note, true)
+        }
+    }
+
+    override fun onItemDeleteClick(position: Int, note: Note) {
+    }
+
+    override fun onItemLongClick(view: View, position: Int, note: Note): Boolean {
+        if (!longClickEnabled) return false
+
+        val activity: Activity = requireActivity()
+        if (!noteRVAdapter.selectionMode && activity is MainActivity) {
+            activity.setSelectionActionBar(true)
+            activity.binding.imgSelectionClose.setOnClickListener {
+                activity.setSelectionActionBar(false)
+                clearSelection()
+            }
+            activity.binding.imgSelectionAll.setOnClickListener {
+                if (noteRVAdapter.currentList.size == selectionList.size) {
+                    setMultipleSelection(false)
+                } else {
+                    setMultipleSelection(true)
+                }
+            }
+        }
+        setSelection(position, note)
+        return true
+    }
+
+    override fun onItemSelectionClick(view: View, position: Int, note: Note) {
+        setSelection(position, note)
+    }
+
+    /**
+     * custom method for multi items selection
+     * */
+
+    private var longClickEnabled = true
+    private var selectionList: MutableList<Note> = mutableListOf()
+
+    private fun setSelection(position: Int, note: Note) {
+        noteRVAdapter.selectionMode = true
+
+        if (selectionList.contains(note)) {
+            selectionList.remove(note)
+        } else {
+            selectionList.add(note)
+        }
+
+        val list = noteRVAdapter.currentList
+        list.forEach {
+            it.apply {
+                it.searchQuery = ""
+                if (it == note) {
+                    it.isSelected = !note.isSelected
+                }
+            }
+        }
+
+        onItemSelectionChanged(list)
+    }
+
+    private fun setMultipleSelection(selectedAll: Boolean) {
+        noteRVAdapter.selectionMode = true
+
+        selectionList.clear()
+        val list = noteRVAdapter.currentList
+        list.forEach {
+            it.isSelected = selectedAll
+            if (selectedAll) selectionList.add(it)
+        }
+        onItemSelectionChanged(list)
+    }
+
+    private fun clearSelection() {
+        noteRVAdapter.selectionMode = false
+
+        selectionList.clear()
+        val list = noteRVAdapter.currentList
+        list.forEach {
+            it.isSelected = false
+        }
+        onItemSelectionChanged(list)
+    }
+
+    private fun onItemSelectionChanged(list: MutableList<Note>) {
+        noteRVAdapter.submitList(list)
+        searchAutoComplete.isEnabled = !noteRVAdapter.selectionMode
+
+        // here get selection list size and update ui according
+        val activity: Activity = requireActivity()
+        if (activity is MainActivity) {
+            activity.binding.txtSelectionCount.text =
+                String.format(getString(R.string.selected_item), selectionList.size)
+
+            activity.binding.imgSelectionAll.isSelected =
+                (noteRVAdapter.currentList.size == selectionList.size)
+        }
+    }
 
     /**
      * methods for dialogs and ui operations

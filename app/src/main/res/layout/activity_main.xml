@@ -148,7 +148,6 @@
             android:layout_gravity="start"
             android:background="@color/drawer_back_lightcolor"
             android:focusableInTouchMode="true"
-            android:visibility="gone"
             app:headerLayout="@layout/nav_drawer_header"
             app:itemTextAppearance="@style/DrawerItemTextAppearance"
             app:itemTextColor="@color/drawer_fontcolortv"

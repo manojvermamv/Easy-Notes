@@ -27,6 +27,7 @@ import com.anubhav.notedown.adapters.NoteItemClickInterface
 import com.anubhav.notedown.database.model.Note
 import com.anubhav.notedown.database.model.getEmptyItem
 import com.anubhav.notedown.databinding.ActivityFavoriteNotesBinding
+import com.anubhav.notedown.utils.GlobalData
 import com.anubhav.notedown.utils.HelperMethod
 import com.anubhav.notedown.viewmodel.NoteViewModal
 import com.google.android.material.snackbar.Snackbar
@@ -48,6 +49,8 @@ class FavoriteNotesActivity : AppCompatActivity(), NoteItemClickInterface {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_favorite_notes)
         //excludeStatusAndNavBarFromTransition(window)
+        GlobalData.setStatusBarFullScreen(this)
+        setViewHeight(binding.topView)
 
         FontUtils.setFont(this, binding.root as ViewGroup)
 
@@ -88,7 +91,6 @@ class FavoriteNotesActivity : AppCompatActivity(), NoteItemClickInterface {
                 if (itemList.isEmpty()) {
                     itemList.add(getEmptyItem())
                 }
-
                 // on below line we are updating our list.
                 noteRVAdapter.submitList(itemList)
             }
@@ -114,7 +116,8 @@ class FavoriteNotesActivity : AppCompatActivity(), NoteItemClickInterface {
     override fun onItemDeleteClick(position: Int, note: Note) {
     }
 
-    override fun onItemLongClick(view: View, position: Int, note: Note) {
+    override fun onItemLongClick(view: View, position: Int, note: Note): Boolean {
+        return false
     }
 
     override fun onItemSelectionClick(view: View, position: Int, note: Note) {

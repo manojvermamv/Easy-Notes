@@ -23,22 +23,17 @@ import com.anubhav.notedown.R
 import com.anubhav.notedown.base.EmptyViewHolder
 import com.anubhav.notedown.database.model.Note
 import com.anubhav.notedown.utils.DateTimeUtils
-import java.util.*
 
 class NoteAdapter(
-    private val context: Context,
-    private val noteItemClickInterface: NoteItemClickInterface
-) :
-    ListAdapter<Note, RecyclerView.ViewHolder>(NoteDiffUtil()) {
+    private val context: Context, private val noteItemClickInterface: NoteItemClickInterface
+) : ListAdapter<Note, RecyclerView.ViewHolder>(NoteDiffUtil()) {
 
+    var selectionMode: Boolean = false
     private val viewTypeToLayoutId: MutableMap<Int, Int> = mutableMapOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding: ViewDataBinding = DataBindingUtil.inflate(
-            LayoutInflater.from(context),
-            viewTypeToLayoutId[viewType] ?: 0,
-            parent,
-            false
+            LayoutInflater.from(context), viewTypeToLayoutId[viewType] ?: 0, parent, false
         )
 
         // set font style
@@ -64,12 +59,6 @@ class NoteAdapter(
         }
         return item.viewType
     }
-
-    var selectionMode: Boolean
-        get() {
-            return false
-        }
-        set(v) {}
 
 }
 
@@ -106,8 +95,11 @@ class BindViewHolder(
         }
 
         rootView.setOnLongClickListener {
-            noteItemClickInterface.onItemLongClick(rootView, position, note)
-            return@setOnLongClickListener true
+            return@setOnLongClickListener noteItemClickInterface.onItemLongClick(
+                rootView,
+                position,
+                note
+            )
         }
 
         if (selectionMode) {
@@ -141,16 +133,10 @@ class BindViewHolder(
                     tv.text = wordToSpan
                 } else {
                     wordToSpan.setSpan(
-                        sizeStyle,
-                        ofe,
-                        ofe + highlightText.length,
-                        0
+                        sizeStyle, ofe, ofe + highlightText.length, 0
                     ) // set size
                     wordToSpan.setSpan(
-                        colorStyle,
-                        ofe,
-                        ofe + highlightText.length,
-                        0
+                        colorStyle, ofe, ofe + highlightText.length, 0
                     ) // set color
                     tv.setText(wordToSpan, TextView.BufferType.SPANNABLE)
                 }
@@ -168,18 +154,20 @@ class NoteDiffUtil : DiffUtil.ItemCallback<Note>() {
     }
 
     override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean {
-        return (oldItem.noteTitle == newItem.noteTitle)
-                && (oldItem.noteDescription == newItem.noteDescription)
-                && (oldItem.timeStamp == newItem.timeStamp)
-                && (oldItem.searchQuery == newItem.searchQuery)
-                && (oldItem.searchQuery != newItem.searchQuery)
+//        return (oldItem.noteTitle == newItem.noteTitle)
+//                && (oldItem.noteDescription == newItem.noteDescription)
+//                && (oldItem.timeStamp == newItem.timeStamp)
+//                && (oldItem.isSelected == newItem.isSelected)
+//                && (oldItem.searchQuery == newItem.searchQuery)
+//                && (oldItem.searchQuery != newItem.searchQuery)
+        return false
     }
 
 }
 
 interface NoteItemClickInterface {
-    fun onItemClick(view: View, position: Int, note: Note);
-    fun onItemLongClick(view: View, position: Int, note: Note);
-    fun onItemSelectionClick(view: View, position: Int, note: Note);
+    fun onItemClick(view: View, position: Int, note: Note)
+    fun onItemLongClick(view: View, position: Int, note: Note): Boolean
+    fun onItemSelectionClick(view: View, position: Int, note: Note)
     fun onItemDeleteClick(position: Int, note: Note)
 }

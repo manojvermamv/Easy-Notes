@@ -1,5 +1,6 @@
 package com.anubhav.notedown.activities
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.transition.Fade
@@ -11,11 +12,17 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.viewModelScope
 import com.anubhav.commonutility.customfont.FontUtils
 import com.anubhav.notedown.R
 import com.anubhav.notedown.adapters.MainActionsAdapter
 import com.anubhav.notedown.adapters.tabIconRes
+import com.anubhav.notedown.database.AppDatabase
+import com.anubhav.notedown.database.model.Note
+import com.anubhav.notedown.database.model.NoteDao
 import com.anubhav.notedown.databinding.ActivityMainBinding
+import com.anubhav.notedown.fragments.MainNotesFragment
 import com.anubhav.notedown.utils.GlobalData
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
@@ -24,6 +31,11 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.android.play.core.tasks.OnCompleteListener
 import com.sanojpunchihewa.updatemanager.UpdateManager
 import com.sanojpunchihewa.updatemanager.UpdateManagerConstant
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -125,9 +137,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onBackPressed() {
         if (binding.rootView.isDrawerOpen(GravityCompat.START)) {
             binding.rootView.closeDrawer(GravityCompat.START)
+        } else if (binding.layTopSelection.visibility == View.VISIBLE) {
+            binding.imgSelectionClose.performClick()
         } else {
             super.onBackPressed()
         }
+    }
+
+    private fun resetNoteState(context: Context) = CoroutineScope(context = Dispatchers.IO).launch {
+        val noteDao = AppDatabase.getDatabase(context).getNoteDao()
+        val list = noteDao.getAllNotes().value as List<Note>
+        list.forEach {
+            it.searchQuery = ""
+            it.isSelected = false
+        }
+        noteDao.insertItemList(list)
+    }
+
+    override fun onDestroy() {
+        val fragment: Fragment? = supportFragmentManager.findFragmentByTag(
+            "android:switcher:" + R.id.viewPager.toString() + ":" + binding.viewPager.currentItem
+        )
+        super.onDestroy()
     }
 
     // Shows the app rate dialog box using In-App review API

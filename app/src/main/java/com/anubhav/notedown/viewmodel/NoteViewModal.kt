@@ -1,6 +1,7 @@
 package com.anubhav.notedown.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.*
 import com.anubhav.notedown.database.AppDatabase
 import com.anubhav.notedown.database.model.Note
@@ -69,6 +70,15 @@ class NoteViewModal(application: Application) : AndroidViewModel(application) {
     fun updateFavoriteNote(note: Note) = viewModelScope.launch(Dispatchers.IO) {
         note.isFavorite = !note.isFavorite
         repository.update(note)
+    }
+
+    fun resetNoteState() = viewModelScope.launch(Dispatchers.IO) {
+        val list: List<Note> = getAllNotes()
+        list.forEach {
+            it.searchQuery = ""
+            it.isSelected = false
+        }
+        repository.insertItemList(list)
     }
 
     fun searchNotes(query: String?): MutableList<Note> {
