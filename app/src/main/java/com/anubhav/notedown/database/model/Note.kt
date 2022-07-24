@@ -14,9 +14,7 @@ class Note(
     @ColumnInfo(name = "description") var noteDescription: String,
     @ColumnInfo(name = "timeStamp") var timeStamp: String,
     @ColumnInfo(name = "timeStampDate") var timeStampDate: OffsetDateTime,
-    @ColumnInfo(name = "isFavorite") var isFavorite: Boolean = false,
-    var searchQuery: String = "",
-    var isSelected: Boolean = false
+    @ColumnInfo(name = "isFavorite") var isFavorite: Boolean = false
 ) : ItemViewModel, Serializable {
 
     // on below line we are specifying our key and
@@ -31,7 +29,7 @@ class Note(
 }
 
 fun getEmptyItem(): Note {
-    val note = Note("", "", "", OffsetDateTime.now(), false, "", false)
+    val note = Note("", "", "", OffsetDateTime.now(), false)
     note.layoutId = R.layout.item_not_found
     note.viewType = R.layout.item_not_found
     return note

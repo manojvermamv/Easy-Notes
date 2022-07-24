@@ -32,7 +32,7 @@ class NoteViewModal(application: Application) : AndroidViewModel(application) {
         allFavoriteNotes = repository.allFavoriteNotes
     }
 
-    private fun getAllNotes(): List<Note> {
+    fun getAllNotes(): List<Note> {
         return repository.allNotes.value ?: listOf()
     }
 
@@ -72,29 +72,16 @@ class NoteViewModal(application: Application) : AndroidViewModel(application) {
         repository.update(note)
     }
 
-    fun resetNoteState() = viewModelScope.launch(Dispatchers.IO) {
-        val list: List<Note> = getAllNotes()
-        list.forEach {
-            it.searchQuery = ""
-            it.isSelected = false
-        }
-        repository.insertItemList(list)
-    }
-
     fun searchNotes(query: String?): MutableList<Note> {
         val list: List<Note> = getAllNotes()
         val filterList = mutableListOf<Note>()
 
         for ((index, note) in list.withIndex()) {
             if (query == null || query.isEmpty()) {
-                note.searchQuery = ""
                 filterList.add(note)
             } else {
                 val mQuery = query.trim()
-                if (note.noteTitle.contains(mQuery)
-                    || note.noteDescription.contains(mQuery)
-                ) {
-                    note.searchQuery = mQuery
+                if (note.noteTitle.contains(mQuery) || note.noteDescription.contains(mQuery)) {
                     filterList.add(note)
                 }
             }

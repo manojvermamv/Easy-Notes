@@ -42,6 +42,59 @@
         <item name="android:backgroundDimEnabled">true</item>
     </style>
 
+    <style name="PreferenceTheme" parent="@style/Theme.TakeANote">
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:textColorHighlight">@color/colorPrimary</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColorSecondary">@color/grey_600</item>
+        <item name="android:fontFamily">@font/josefin_regular</item>
+        <item name="android:overScrollMode">never</item>
+        <item name="android:scrollbars">none</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="CustomPreferenceTheme" parent="@style/PreferenceThemeOverlay">
+        <item name="preferenceFragmentCompatStyle">@style/CustomPreferenceFragmentCompatStyle</item>
+        <item name="preferenceCategoryStyle">@style/CustomPreferenceCategory</item>
+        <item name="preferenceStyle">@style/CustomPreference</item>
+        <item name="checkBoxPreferenceStyle">@style/CustomCheckBoxPreference</item>
+        <item name="dialogPreferenceStyle">@style/CustomDialogPreference</item>
+        <item name="switchPreferenceCompatStyle">@style/CustomSwitchPreferenceCompat</item>
+        <item name="switchPreferenceStyle">@style/CustomSwitchPreference</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="CustomPreferenceFragmentCompatStyle" parent="@style/PreferenceFragment.Material">
+        <item name="android:layout">@layout/fragment_settings</item>
+    </style>
+
+    <style name="CustomPreferenceCategory" parent="Preference.Category.Material">
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="CustomPreference" parent="Preference.Material">
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="CustomCheckBoxPreference" parent="Preference.CheckBoxPreference.Material">
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="CustomDialogPreference" parent="Preference.DialogPreference.Material">
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="CustomSwitchPreferenceCompat" parent="Preference.SwitchPreferenceCompat.Material">
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="CustomSwitchPreference" parent="Preference.SwitchPreference.Material">
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+
     <style name="cursorColor" parent="Widget.AppCompat.AutoCompleteTextView">
         <item name="android:textCursorDrawable">@drawable/cursor_search</item>
     </style>

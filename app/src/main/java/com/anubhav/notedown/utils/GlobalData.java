@@ -179,6 +179,12 @@ public class GlobalData {
         context.startActivity(intent);
     }
 
+    public static void openAppPrivacyPolicy(Context context) {
+        String url = "";
+        //openWebPage(context, url);
+        openAppStoreDeveloper(context);
+    }
+
     public static String removeFirstCountChar(String word, int count) {
         return word.substring(count);
     }

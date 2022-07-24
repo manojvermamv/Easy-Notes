@@ -3,15 +3,15 @@
     <group android:checkableBehavior="none">
         <item
             android:id="@+id/nav_favorites"
-            android:title="Favorites" />
+            android:title="@string/label_favorites" />
         <item
             android:id="@+id/nav_other_apps"
-            android:title="Other Apps" />
+            android:title="@string/label_other_apps" />
         <item
             android:id="@+id/nav_rate_app"
-            android:title="Rate this app" />
+            android:title="@string/label_rate_this_app" />
         <item
             android:id="@+id/nav_about"
-            android:title="About" />
+            android:title="@string/label_about" />
     </group>
 </menu>

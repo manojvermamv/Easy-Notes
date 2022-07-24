@@ -9,16 +9,8 @@
         <import type="android.text.TextUtils" />
 
         <variable
-            name="position"
-            type="Integer" />
-
-        <variable
             name="note"
             type="com.anubhav.notedown.database.model.Note" />
-
-        <variable
-            name="onNoteItemClick"
-            type="com.anubhav.notedown.adapters.NoteItemClickInterface" />
 
     </data>
 
@@ -79,7 +71,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:onClick="@{(view) -> onNoteItemClick.onItemDeleteClick(position, note)}"
                 android:padding="5dp"
                 android:src="@drawable/ic_round_delete_outline_24"
                 android:visibility="gone"

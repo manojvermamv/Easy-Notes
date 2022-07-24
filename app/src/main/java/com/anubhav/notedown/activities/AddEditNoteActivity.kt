@@ -207,6 +207,7 @@ class AddEditNoteActivity : AppCompatActivity() {
     private fun shareNote() {
         val noteTitle = binding.edtNoteName.text.toString().trim()
         val noteDescription = binding.edNoteDesc.text.toString().trim()
+
     }
 
     private fun showKeyboard() {

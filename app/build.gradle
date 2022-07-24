@@ -71,6 +71,7 @@ dependencies {
     implementation project(path: ':permissionschecker')
 
     implementation "androidx.appcompat:appcompat:$rootProject.appCompatVersion"
+    implementation "androidx.preference:preference-ktx:$rootProject.fragmentVersion"
     implementation "androidx.activity:activity-ktx:$rootProject.activityVersion"
 
     // Lifecycle components

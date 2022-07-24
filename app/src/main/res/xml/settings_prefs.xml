@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:title="GENERAL"
+        app:iconSpaceReserved="false">
+
+        <ListPreference
+            android:defaultValue="1"
+            android:dialogTitle="@string/pref_uploads"
+            android:entries="@array/pref_uploads"
+            android:entryValues="@array/pref_values"
+            android:key="@string/pref_uploads"
+            android:summary="@string/pref_uploads_specify_network"
+            android:title="@string/pref_uploads"
+            app:iconSpaceReserved="false"
+            app:isPreferenceVisible="false" />
+
+        <ListPreference
+            android:defaultValue="0"
+            android:dialogTitle="@string/pref_sortby"
+            android:entries="@array/pref_sortby_entries"
+            android:entryValues="@array/pref_values"
+            android:key="@string/pref_sortby"
+            android:summary="@string/pref_sortby_desc"
+            android:title="@string/pref_sortby"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="ANIMATION"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/pref_edit_note_anim"
+            android:summary="@string/pref_edit_note_anim_desc"
+            android:title="@string/pref_edit_note_anim"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="OTHER"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            android:key="@string/pref_privacy_policy"
+            android:title="@string/pref_privacy_policy"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="@string/pref_aboutus"
+            android:title="@string/pref_aboutus"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

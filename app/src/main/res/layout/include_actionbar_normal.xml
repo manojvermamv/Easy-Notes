@@ -65,8 +65,9 @@
                 <TextView
                     android:id="@+id/txt_title"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
+                    android:gravity="center_vertical"
                     android:text='@{actionBarTitle, default="@string/app_name"}'
                     android:textColor="@color/fontcoloractionbar"
                     android:textSize="18sp" />

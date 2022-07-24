@@ -1,22 +1,22 @@
 package com.anubhav.notedown.base
 
+import android.content.Context
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
+import com.anubhav.commonutility.customfont.FontUtils
 import com.anubhav.notedown.R
+import com.anubhav.notedown.databinding.ItemNotFoundBinding
 
-class EmptyViewHolder(@NonNull itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-    private var rootView: ViewGroup = itemView.findViewById(R.id.root_view)
-    private var tvNotFound: TextView = itemView.findViewById(R.id.not_found_textView)
-    var animationView: ImageView = itemView.findViewById(R.id.not_found_animation)
+class EmptyViewHolder(context: Context, binding: ItemNotFoundBinding) :
+    RecyclerView.ViewHolder(binding.root) {
 
     init {
-        rootView.visibility = View.VISIBLE
-        tvNotFound.setText(R.string.no_results)
+        // set font style
+        FontUtils.setFont(context, binding.root as ViewGroup)
+
+        binding.rootView.visibility = View.VISIBLE
+        binding.notFoundTextView.setText(R.string.no_results)
     }
 
 }

@@ -65,7 +65,7 @@ class FavoriteNotesActivity : AppCompatActivity(), NoteItemClickInterface {
     }
 
     private fun onCreateActionBar() {
-        binding.layActionbar.actionBarTitle = getString(R.string.app_name)
+        binding.layActionbar.actionBarTitle = getString(R.string.label_favorites)
         binding.layActionbar.menuVisible = false
 
         binding.layActionbar.imgBack.setOnClickListener { onBackPressed() }
@@ -116,11 +116,12 @@ class FavoriteNotesActivity : AppCompatActivity(), NoteItemClickInterface {
     override fun onItemDeleteClick(position: Int, note: Note) {
     }
 
-    override fun onItemLongClick(view: View, position: Int, note: Note): Boolean {
-        return false
+    override fun onItemSelectionEnabled(enabled: Boolean) {
+
     }
 
-    override fun onItemSelectionClick(view: View, position: Int, note: Note) {
+    override fun onItemSelectionChanged(selectionListCounts: Int) {
+
     }
 
     private var onItemSwipeListener: ItemSwipeHelper.OnSwipeListener =

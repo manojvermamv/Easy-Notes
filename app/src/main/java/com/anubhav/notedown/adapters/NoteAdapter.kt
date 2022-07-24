@@ -10,45 +10,71 @@ import android.text.style.RelativeSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.anubhav.commonutility.customfont.FontUtils
-import com.anubhav.notedown.BR
 import com.anubhav.notedown.R
 import com.anubhav.notedown.base.EmptyViewHolder
 import com.anubhav.notedown.database.model.Note
+import com.anubhav.notedown.databinding.ItemNotFoundBinding
+import com.anubhav.notedown.databinding.NoteRvItemBinding
 import com.anubhav.notedown.utils.DateTimeUtils
+
 
 class NoteAdapter(
     private val context: Context, private val noteItemClickInterface: NoteItemClickInterface
 ) : ListAdapter<Note, RecyclerView.ViewHolder>(NoteDiffUtil()) {
 
-    var selectionMode: Boolean = false
     private val viewTypeToLayoutId: MutableMap<Int, Int> = mutableMapOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val binding: ViewDataBinding = DataBindingUtil.inflate(
+        val binding: Any = DataBindingUtil.inflate(
             LayoutInflater.from(context), viewTypeToLayoutId[viewType] ?: 0, parent, false
         )
 
-        // set font style
-        FontUtils.setFont(context, binding.root as ViewGroup)
-
         // set view holder according viewType
         if (viewType == R.layout.item_not_found) {
-            return EmptyViewHolder(binding.root)
+            return EmptyViewHolder(context, binding as ItemNotFoundBinding)
         }
-        return BindViewHolder(binding)
+        return BindViewHolder(binding as NoteRvItemBinding)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is BindViewHolder) {
-            holder.bind(position, getItem(position), noteItemClickInterface, selectionMode)
+            holder.bind(getItem(position), searchQuery)
+
+            holder.binding.rootView.setOnClickListener {
+                if (selectionMode) {
+                    setSelection(position, getItem(position))
+                } else {
+                    noteItemClickInterface.onItemClick(it, position, getItem(position))
+                }
+            }
+
+            holder.binding.rootView.setOnLongClickListener {
+                if (longClickEnabled) {
+                    if (!selectionMode) {
+                        noteItemClickInterface.onItemSelectionEnabled(true)
+                    }
+                    setSelection(position, getItem(position))
+                    return@setOnLongClickListener true
+                }
+                return@setOnLongClickListener false
+            }
+
+            if (selectionMode) {
+                holder.binding.ivSelection.visibility = View.VISIBLE
+                holder.binding.ivSelection.isSelected =
+                    selectionList.contains(getItem(position).taskId)
+                holder.binding.ivSelection.setOnClickListener {
+                    setSelection(position, getItem(position))
+                }
+            } else {
+                holder.binding.ivSelection.visibility = View.GONE
+            }
         }
     }
 
@@ -60,57 +86,107 @@ class NoteAdapter(
         return item.viewType
     }
 
+    /**
+     * custom method for multi items selection
+     * */
+
+    var selectionMode: Boolean = false
+    var longClickEnabled = true
+    var selectionList: MutableList<Int> = mutableListOf()
+
+    private fun setSelection(position: Int, note: Note) {
+        selectionMode = true
+        if (selectionList.contains(note.taskId)) {
+            selectionList.remove(note.taskId)
+        } else {
+            selectionList.add(note.taskId)
+        }
+
+        notifyDataSetChanged()
+        noteItemClickInterface.onItemSelectionChanged(selectionList.size)
+    }
+
+    fun refreshSelection() {
+        val newSelectionList: MutableList<Int> = mutableListOf()
+        currentList.forEachIndexed { _, item ->
+            if (selectionList.contains(item.taskId)) {
+                newSelectionList.add(item.taskId)
+            }
+        }
+
+        selectionList.clear()
+        selectionList.addAll(newSelectionList)
+        noteItemClickInterface.onItemSelectionChanged(selectionList.size)
+    }
+
+    fun getSelectionSize(): Int {
+        return selectionList.size
+    }
+
+    fun isAllItemSelected(): Boolean {
+        return currentList.size == selectionList.size
+    }
+
+    fun setAllItemSelected() {
+        val selectedAll = !isAllItemSelected()
+
+        selectionMode = true
+        selectionList.clear()
+        if (selectedAll) {
+            currentList.forEachIndexed { _, item ->
+                selectionList.add(item.taskId)
+            }
+        }
+
+        notifyDataSetChanged()
+        noteItemClickInterface.onItemSelectionChanged(selectionList.size)
+    }
+
+    fun clearSelection() {
+        if (selectionMode) {
+            selectionMode = false
+            selectionList.clear()
+            notifyDataSetChanged()
+        }
+        noteItemClickInterface.onItemSelectionEnabled(false)
+    }
+
+
+    /**
+     * custom method for search query color change
+     * */
+
+    private var searchQuery: String = ""
+
+    fun submitSearchQuery(query: String?) {
+        searchQuery = ""
+        if (query != null) {
+            searchQuery = query
+        }
+    }
+
 }
 
-class BindViewHolder(
-    private val binding: ViewDataBinding,
-    private val rootView: ViewGroup = binding.root.findViewById(R.id.root_view),
-    private val tvTitle: TextView = binding.root.findViewById(R.id.idTVNote),
-    private val tvDesc: TextView = binding.root.findViewById(R.id.idTVNoteDesc),
-    private val tvDate: TextView = binding.root.findViewById(R.id.idTVDate),
-    private val ivSelection: ImageView = binding.root.findViewById(R.id.iv_selection)
-) : RecyclerView.ViewHolder(binding.root) {
+class BindViewHolder(val binding: NoteRvItemBinding) :
+    RecyclerView.ViewHolder(binding.root) {
+
+    init {
+        // set font style
+        FontUtils.setFont(binding.root.context, binding.root as ViewGroup)
+    }
+
     // on below line we are creating an initializing all our
     // variables which we have added in layout file.
-    fun bind(
-        position: Int,
-        note: Note,
-        noteItemClickInterface: NoteItemClickInterface,
-        selectionMode: Boolean
-    ) {
-        binding.setVariable(BR.position, position)
-        binding.setVariable(BR.note, note)
-        binding.setVariable(BR.onNoteItemClick, noteItemClickInterface)
+    fun bind(note: Note, query: String) {
+        binding.note = note
 
-        tvTitle.text =
+        binding.idTVNote.text =
             if (TextUtils.isEmpty(note.noteTitle)) note.noteDescription else note.noteTitle
-        tvDesc.text = note.noteDescription
-        tvDate.text = DateTimeUtils.getDisplayTime(note.timeStamp)
+        binding.idTVNoteDesc.text = note.noteDescription
+        binding.idTVDate.text = DateTimeUtils.getDisplayTime(note.timeStamp)
 
-        setHighLightedText(tvTitle, note.searchQuery)
-        setHighLightedText(tvDesc, note.searchQuery)
-
-        rootView.setOnClickListener {
-            noteItemClickInterface.onItemClick(rootView, position, note)
-        }
-
-        rootView.setOnLongClickListener {
-            return@setOnLongClickListener noteItemClickInterface.onItemLongClick(
-                rootView,
-                position,
-                note
-            )
-        }
-
-        if (selectionMode) {
-            ivSelection.visibility = View.VISIBLE
-            ivSelection.isSelected = note.isSelected
-            ivSelection.setOnClickListener {
-                noteItemClickInterface.onItemSelectionClick(ivSelection, position, note)
-            }
-        } else {
-            ivSelection.visibility = View.GONE
-        }
+        setHighLightedText(binding.idTVNote, query)
+        setHighLightedText(binding.idTVNoteDesc, query)
     }
 
     private fun setHighLightedText(tv: TextView, textToHighlight: String) {
@@ -157,9 +233,6 @@ class NoteDiffUtil : DiffUtil.ItemCallback<Note>() {
 //        return (oldItem.noteTitle == newItem.noteTitle)
 //                && (oldItem.noteDescription == newItem.noteDescription)
 //                && (oldItem.timeStamp == newItem.timeStamp)
-//                && (oldItem.isSelected == newItem.isSelected)
-//                && (oldItem.searchQuery == newItem.searchQuery)
-//                && (oldItem.searchQuery != newItem.searchQuery)
         return false
     }
 
@@ -167,7 +240,9 @@ class NoteDiffUtil : DiffUtil.ItemCallback<Note>() {
 
 interface NoteItemClickInterface {
     fun onItemClick(view: View, position: Int, note: Note)
-    fun onItemLongClick(view: View, position: Int, note: Note): Boolean
-    fun onItemSelectionClick(view: View, position: Int, note: Note)
     fun onItemDeleteClick(position: Int, note: Note)
+
+    // methods for multi selection list
+    fun onItemSelectionEnabled(enabled: Boolean)
+    fun onItemSelectionChanged(selectionListCounts: Int)
 }

@@ -29,18 +29,57 @@
     <string name="cancel">Cancel</string>
     <string name="dismiss">Dismiss</string>
     <string name="delete">Delete</string>
+    <string name="share">Share</string>
     <string name="setting">Settings</string>
     <string name="settings">Setting</string>
     <string name="required">Required*</string>
+    <string name="seconds">seconds</string>
     <string name="save">Save</string>
     <string name="update">Update</string>
     <string name="title">Title</string>
     <string name="start_typing">Start typing</string>
     <string name="search_notes">Search notes</string>
-
-    <string name="confirm_delete_title">Warring!</string>
-    <string name="confirm_delete_desc">Do you want to delete this note!</string>
-
     <string name="selected_item">%1$s items selected</string>
+    <string name="confirm_delete_title">Warring!</string>
+    <string name="confirm_delete_desc">Do you want to delete this note</string>
+    <string name="confirm_deleteall_desc">Do you want to delete %1$s notes</string>
+
+    <string name="label_favorites">Favorites</string>
+    <string name="label_other_apps">Other Apps</string>
+    <string name="label_rate_this_app">Rate this app</string>
+    <string name="label_about">About</string>
+
+    <!-- Settings Preferences -->
+    <string name="pref_edit_note_anim">Open Note animation</string>
+    <string name="pref_edit_note_anim_desc">Enable or disable start animation of note edit page</string>
+    <string name="pref_privacy_policy">Privacy Policy</string>
+    <string name="pref_aboutus">About US</string>
+
+    <string name="pref_sortby">Sort By</string>
+    <string name="pref_sortby_desc">Sort notes by preferences</string>
+    <string-array name="pref_sortby_entries">
+        <item>By modification date</item>
+        <item>By name</item>
+    </string-array>
+
+    <string name="pref_uploads">Uploads</string>
+    <string name="pref_uploads_specify_network">Specify network preferences for uploads</string>
+    <string-array name="pref_uploads">
+        <item>Only when on Wi-Fi</item>
+        <item>On any network</item>
+    </string-array>
+
+
+    <string-array name="pref_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
 
 </resources>
