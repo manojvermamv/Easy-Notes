@@ -41,7 +41,7 @@ class AddEditNoteActivity : AppCompatActivity() {
 
         fun start(activity: Activity, sharedView: View, note: Note?, hasAnimation: Boolean = true) {
             val intent = Intent(activity, AddEditNoteActivity::class.java)
-            // opening a new intent and passing a data to it.
+            // opening a new intent and passing a data to it
             intent.putExtra("hasAnimation", hasAnimation)
             intent.putExtra("updateNote", note != null)
             if (note != null) intent.putExtra("noteData", note)
