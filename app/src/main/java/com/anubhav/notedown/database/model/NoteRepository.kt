@@ -51,6 +51,10 @@ class NoteRepository(private val noteDao: NoteDao) {
         noteDao.deleteAll()
     }
 
+    suspend fun getNote(taskId: Int): Note {
+        return noteDao.getNote(taskId)
+    }
+
     // on below line we are creating a update method for
     // updating our note from database.
     suspend fun update(note: Note) {

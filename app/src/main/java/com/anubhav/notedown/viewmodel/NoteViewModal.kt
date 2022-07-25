@@ -6,8 +6,7 @@ import androidx.lifecycle.*
 import com.anubhav.notedown.database.AppDatabase
 import com.anubhav.notedown.database.model.Note
 import com.anubhav.notedown.database.model.NoteRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class NoteViewModal(application: Application) : AndroidViewModel(application) {
 
@@ -55,6 +54,13 @@ class NoteViewModal(application: Application) : AndroidViewModel(application) {
         repository.deleteAll()
     }
 
+    suspend fun getNote(taskId: Int): Note {
+        val note: Note = withContext(Dispatchers.IO) {
+            repository.getNote(taskId)
+        }
+        return note
+    }
+
     // on below line we are creating a new method for updating a note. In this we are
     // calling a update method from our repository to update our note.
     fun updateNote(note: Note) = viewModelScope.launch(Dispatchers.IO) {
@@ -88,6 +94,38 @@ class NoteViewModal(application: Application) : AndroidViewModel(application) {
         }
         //filterList.sortedBy { it.timeStampDate }
         return filterList
+    }
+
+    fun getAllNotesAsStrings(list: MutableList<Int>): Deferred<String> = viewModelScope.async {
+        val sb = StringBuilder()
+        list.forEach {
+            val note = getNote(it)
+            if (note.noteTitle.isNotEmpty()) {
+                sb.append(note.noteTitle).append("\n")
+            }
+            if (note.noteDescription.isNotEmpty()) {
+                sb.append(note.noteDescription)
+            }
+            sb.append("\n").append("\n")
+        }
+        return@async sb.toString()
+    }
+
+    fun getAllNotesAsString(list: MutableList<Int>): String {
+        return runBlocking(viewModelScope.coroutineContext) {
+            val sb = StringBuilder()
+            list.forEach {
+                val note = getNote(it)
+                if (note.noteTitle.isNotEmpty()) {
+                    sb.append(note.noteTitle).append("\n")
+                }
+                if (note.noteDescription.isNotEmpty()) {
+                    sb.append(note.noteDescription)
+                }
+                sb.append("\n").append("\n")
+            }
+            return@runBlocking sb.toString()
+        }
     }
 
 }

@@ -134,6 +134,14 @@ public class GlobalData {
         }
     }
 
+    public static void shareText(Context context, String text) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+        context.startActivity(Intent.createChooser(intent, "Share via"));
+    }
+
     public static void disableTooltipText(BottomNavigationView navigationView) {
         try {
             Menu menu = navigationView.getMenu();
@@ -162,14 +170,11 @@ public class GlobalData {
             Intent storeIntent = new Intent(Intent.ACTION_VIEW, uri);
             // To count with Play market backstack, After pressing back button,
             // to taken back to our application, we need to add following flags to intent.
-            storeIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
-                    Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
-                    Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+            storeIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
             context.startActivity(storeIntent);
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
-            context.startActivity(new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("http://play.google.com/store/apps/details?id=" + context.getPackageName())));
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + context.getPackageName())));
         }
     }
 

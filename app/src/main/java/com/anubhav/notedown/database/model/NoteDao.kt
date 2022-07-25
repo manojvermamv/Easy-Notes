@@ -24,6 +24,9 @@ interface NoteDao {
     @Query("DELETE FROM notesTable")
     suspend fun deleteAll()
 
+    @Query("SELECT * FROM notesTable WHERE taskId = :taskID")
+    suspend fun getNote(taskID: Int): Note
+
     @Query("SELECT * FROM notesTable ORDER BY timeStampDate DESC")
     fun getAllNotes(): LiveData<List<Note>>
 

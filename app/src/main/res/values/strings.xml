@@ -10,7 +10,8 @@
     <string name="back_camera">Back Camera</string>
     <string name="no_camera">There is no camera on this device</string>
     <string name="search">Search</string>
-    <string name="no_results">No results</string>
+    <string name="no_results_notes">No notes</string>
+    <string name="no_results_tasks">No tasks</string>
 
     <string name="no_internet_title">No Network Connection</string>
     <string name="internet_title">No Network Connection</string>
@@ -53,7 +54,7 @@
     <string name="pref_edit_note_anim">Open Note animation</string>
     <string name="pref_edit_note_anim_desc">Enable or disable start animation of note edit page</string>
     <string name="pref_privacy_policy">Privacy Policy</string>
-    <string name="pref_aboutus">About US</string>
+    <string name="pref_aboutus">About Us</string>
 
     <string name="pref_sortby">Sort By</string>
     <string name="pref_sortby_desc">Sort notes by preferences</string>

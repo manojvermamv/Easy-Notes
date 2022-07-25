@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,6 +43,7 @@ import com.anubhav.notedown.utils.GlobalData
 import com.anubhav.notedown.utils.HelperMethod
 import com.anubhav.notedown.viewmodel.NoteViewModal
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -193,6 +195,31 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
     private fun onShareAllClick() {
         if (!noteRVAdapter.selectionMode) return
         if (noteRVAdapter.selectionList.isEmpty()) return
+
+        val textNote = viewModal.getAllNotesAsStrings(noteRVAdapter.selectionList)
+        if (textNote.isNotEmpty()) {
+            GlobalData.shareText(context, textNote)
+        } else {
+            Toast.makeText(context, "Notes text is empty", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun getAllNotesAsString(list: MutableList<Int>): String {
+        val sb = StringBuilder()
+        lifecycleScope.launch {
+            list.forEach {
+                val note = viewModal.getNote(it)
+                if (note.noteTitle.isNotEmpty()) {
+                    sb.append(note.noteTitle).append("\n")
+                }
+                if (note.noteDescription.isNotEmpty()) {
+                    sb.append(note.noteDescription)
+                }
+                sb.append("\n").append("\n")
+            }
+            Toast.makeText(context, "in lifecycleScope -> " + sb.toString(), Toast.LENGTH_SHORT).show()
+        }
+        return sb.toString()
     }
 
     /**
@@ -228,7 +255,6 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
 
     private fun updateRecyclerAdapter(itemList: MutableList<Note>) {
         // on below line we are updating our list.
-
         if (itemList.isEmpty()) {
             itemList.add(getEmptyItem())
             noteRVAdapter.submitList(itemList) {
@@ -289,7 +315,6 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
             activity.binding.imgSelectionAll.isSelected = noteRVAdapter.isAllItemSelected()
         }
     }
-
 
     private fun showNoteDeleteDialog(note: Note) {
         val dialog = Dialog(requireContext(), R.style.CustomDialogTheme)

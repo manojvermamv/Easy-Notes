@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -208,6 +209,18 @@ class AddEditNoteActivity : AppCompatActivity() {
         val noteTitle = binding.edtNoteName.text.toString().trim()
         val noteDescription = binding.edNoteDesc.text.toString().trim()
 
+        if (noteTitle.isNotEmpty() || noteDescription.isNotEmpty()) {
+            val sb = StringBuilder()
+            if (noteTitle.isNotEmpty()) {
+                sb.append(noteTitle).append("\n")
+            }
+            if (noteDescription.isNotEmpty()) {
+                sb.append(noteDescription)
+            }
+            GlobalData.shareText(this, sb.toString())
+        } else {
+            Toast.makeText(this, "Note is empty", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun showKeyboard() {

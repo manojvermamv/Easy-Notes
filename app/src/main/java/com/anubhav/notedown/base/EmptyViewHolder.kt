@@ -16,7 +16,7 @@ class EmptyViewHolder(context: Context, binding: ItemNotFoundBinding) :
         FontUtils.setFont(context, binding.root as ViewGroup)
 
         binding.rootView.visibility = View.VISIBLE
-        binding.notFoundTextView.setText(R.string.no_results)
+        binding.notFoundTextView.setText(R.string.no_results_notes)
     }
 
 }
