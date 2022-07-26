@@ -55,7 +55,7 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
     lateinit var binding: FragMainNotesBinding
 
     // on below line we are creating a variable
-    // for our recycler view, exit text, button and viewModel.
+    // for our recycler view, exit text, button and viewModel
     lateinit var viewModal: NoteViewModal
     lateinit var noteRVAdapter: NoteAdapter
 
@@ -196,7 +196,7 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         if (!noteRVAdapter.selectionMode) return
         if (noteRVAdapter.selectionList.isEmpty()) return
 
-        val textNote = viewModal.getAllNotesAsStrings(noteRVAdapter.selectionList)
+        val textNote: String = viewModal.getAllNotesAsStrings(noteRVAdapter.selectionList)
         if (textNote.isNotEmpty()) {
             GlobalData.shareText(context, textNote)
         } else {
