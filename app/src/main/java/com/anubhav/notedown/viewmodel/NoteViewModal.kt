@@ -1,8 +1,6 @@
 package com.anubhav.notedown.viewmodel
 
 import android.app.Application
-import android.app.Service
-import android.content.Context
 import androidx.lifecycle.*
 import com.anubhav.notedown.database.AppDatabase
 import com.anubhav.notedown.database.model.Note
@@ -95,41 +93,6 @@ class NoteViewModal(application: Application) : AndroidViewModel(application) {
         }
         //filterList.sortedBy { it.timeStampDate }
         return filterList
-    }
-
-    suspend fun getAllNotesAsStrings(list: MutableList<Int>): String {
-        val result = viewModelScope.async {
-            val sb = StringBuilder()
-            list.forEach {
-                val note = getNote(it)
-                if (note.noteTitle.isNotEmpty()) {
-                    sb.append(note.noteTitle).append("\n")
-                }
-                if (note.noteDescription.isNotEmpty()) {
-                    sb.append(note.noteDescription)
-                }
-                sb.append("\n").append("\n")
-            }
-            sb.toString()
-        }
-        return result.await()
-    }
-
-    fun getAllNotesAsString(list: MutableList<Int>): String {
-        return runBlocking(viewModelScope.coroutineContext) {
-            val sb = StringBuilder()
-            list.forEach {
-                val note = getNote(it)
-                if (note.noteTitle.isNotEmpty()) {
-                    sb.append(note.noteTitle).append("\n")
-                }
-                if (note.noteDescription.isNotEmpty()) {
-                    sb.append(note.noteDescription)
-                }
-                sb.append("\n").append("\n")
-            }
-            return@runBlocking sb.toString()
-        }
     }
 
 }

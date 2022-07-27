@@ -24,6 +24,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,6 +44,8 @@ import com.anubhav.notedown.utils.GlobalData
 import com.anubhav.notedown.utils.HelperMethod
 import com.anubhav.notedown.viewmodel.NoteViewModal
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.*
@@ -197,8 +200,8 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         if (!noteRVAdapter.selectionMode) return
         if (noteRVAdapter.selectionList.isEmpty()) return
 
-        runBlocking {
-            val textNote: String = viewModal.getAllNotesAsStrings(noteRVAdapter.selectionList)
+        lifecycleScope.launch(Dispatchers.IO) {
+            val textNote = getAllNotesAsString(noteRVAdapter.selectionList)
             if (textNote.isNotEmpty()) {
                 GlobalData.shareText(context, textNote)
             } else {
@@ -207,9 +210,9 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         }
     }
 
-    private fun getAllNotesAsString(list: MutableList<Int>): String {
-        val sb = StringBuilder()
-        lifecycleScope.launch {
+    private suspend fun getAllNotesAsString(list: MutableList<Int>): String {
+        val result = lifecycleScope.async {
+            val sb = StringBuilder()
             list.forEach {
                 val note = viewModal.getNote(it)
                 if (note.noteTitle.isNotEmpty()) {
@@ -220,11 +223,11 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
                 }
                 sb.append("\n").append("\n")
             }
-            Toast.makeText(context, "in lifecycleScope -> " + sb.toString(), Toast.LENGTH_SHORT)
-                .show()
+            sb.toString()
         }
-        return sb.toString()
+        return result.await()
     }
+
 
     /**
      * SharedPreferences from settings preferences
