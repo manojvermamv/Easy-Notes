@@ -44,6 +44,7 @@ import com.anubhav.notedown.utils.HelperMethod
 import com.anubhav.notedown.viewmodel.NoteViewModal
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 
@@ -196,11 +197,13 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
         if (!noteRVAdapter.selectionMode) return
         if (noteRVAdapter.selectionList.isEmpty()) return
 
-        val textNote: String = viewModal.getAllNotesAsStrings(noteRVAdapter.selectionList)
-        if (textNote.isNotEmpty()) {
-            GlobalData.shareText(context, textNote)
-        } else {
-            Toast.makeText(context, "Notes text is empty", Toast.LENGTH_SHORT).show()
+        runBlocking {
+            val textNote: String = viewModal.getAllNotesAsStrings(noteRVAdapter.selectionList)
+            if (textNote.isNotEmpty()) {
+                GlobalData.shareText(context, textNote)
+            } else {
+                Toast.makeText(context, "Notes text is empty", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -217,7 +220,8 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
                 }
                 sb.append("\n").append("\n")
             }
-            Toast.makeText(context, "in lifecycleScope -> " + sb.toString(), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "in lifecycleScope -> " + sb.toString(), Toast.LENGTH_SHORT)
+                .show()
         }
         return sb.toString()
     }
