@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -12,10 +13,12 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.ArrayRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -31,6 +34,7 @@ import com.anubhav.notedown.utils.GlobalData
 import com.anubhav.notedown.utils.HelperMethod
 import com.anubhav.notedown.viewmodel.NoteViewModal
 import com.google.android.material.snackbar.Snackbar
+import java.util.*
 
 class FavoriteNotesActivity : AppCompatActivity(), NoteItemClickInterface {
 
@@ -78,6 +82,7 @@ class FavoriteNotesActivity : AppCompatActivity(), NoteItemClickInterface {
 
         // on below line we are initializing our adapter class.
         noteRVAdapter = NoteAdapter(this, this)
+        noteRVAdapter.longClickEnabled = false
 
         // on below line we are setting
         // adapter to our recycler view.
@@ -104,24 +109,48 @@ class FavoriteNotesActivity : AppCompatActivity(), NoteItemClickInterface {
         itemTouchHelper.attachToRecyclerView(binding.notesRV)
     }
 
+
+    /**
+     * SharedPreferences from settings preferences
+     * */
+
+    private var isAnimationEnabled = true
+
+    private fun initSharedPreferences() {
+        val prefsValues = resources.getStringArray(R.array.pref_values)
+        val sharedPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+        isAnimationEnabled = sharedPrefs.getBoolean(getString(R.string.pref_edit_note_anim), true)
+
+        val prefSortBy =
+            sharedPrefs.getString(getString(R.string.pref_sortby), prefsValues[0]) as String
+        val prefSortByTitle = getListPreferencesTitle(prefSortBy, R.array.pref_sortby_entries)
+
+    }
+
+    private fun getListPreferencesTitle(value: Any, @ArrayRes entries: Int): String {
+        val entryValues = resources.getStringArray(R.array.pref_values);
+        val prefIndex: Int = Arrays.binarySearch(entryValues, value)
+        return resources.getStringArray(entries)[prefIndex]
+    }
+
     override fun onResume() {
         super.onResume()
+        initSharedPreferences()
         viewModal.updateNotes()
     }
 
     override fun onItemClick(view: View, position: Int, note: Note) {
-        AddEditNoteActivity.start(this, view, note, true)
+        AddEditNoteActivity.start(this, view, note, isAnimationEnabled)
     }
 
     override fun onItemDeleteClick(position: Int, note: Note) {
     }
 
     override fun onItemSelectionEnabled(enabled: Boolean) {
-
     }
 
     override fun onItemSelectionChanged(selectionListCounts: Int) {
-
     }
 
     private var onItemSwipeListener: ItemSwipeHelper.OnSwipeListener =

@@ -256,8 +256,8 @@ class MainNotesFragment() : Fragment(), NoteItemClickInterface {
 
     override fun onResume() {
         super.onResume()
-        viewModal.updateNotes()
         initSharedPreferences()
+        viewModal.updateNotes()
     }
 
     private fun updateRecyclerAdapter(itemList: MutableList<Note>) {
