@@ -10,7 +10,7 @@
 
         <variable
             name="note"
-            type="com.anubhav.notedown.database.model.Note" />
+            type="com.anubhav.easynotes.database.model.Note" />
 
     </data>
 

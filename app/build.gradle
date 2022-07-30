@@ -13,7 +13,7 @@ android {
         release {
             storeFile file('../keystore.jks')
             storePassword "74477447"
-            keyAlias "notedown"
+            keyAlias "easynotes"
             keyPassword "74477447"
         }
     }

@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/ManojProjects/Projects/TakeANote/app/src/main/res/drawable/background_splash.xml" value="0.1085" />
         <entry key="..\:/ManojProjects/Projects/TakeANote/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/ManojProjects/Projects/TakeANote/app/src/main/res/layout/nav_drawer_header.xml" value="0.1" />
+        <entry key="..\:/ManojProjects/Projects/TakeANote/app/src/main/res/layout/note_rv_item.xml" value="0.1" />
       </map>
     </option>
   </component>

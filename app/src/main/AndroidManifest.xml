@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.anubhav.notedown">
+    package="com.anubhav.easynotes">
 
     <application
         android:allowBackup="true"
@@ -11,8 +11,9 @@
         android:theme="@style/Theme.TakeANote">
 
         <activity
-            android:name="com.anubhav.notedown.activities.SplashActivity"
-            android:theme="@style/Theme.Splash">
+            android:name=".activities.SplashActivity"
+            android:theme="@style/Theme.Splash"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -20,19 +21,19 @@
         </activity>
 
         <activity
-            android:name="com.anubhav.notedown.activities.MainActivity"
+            android:name=".activities.MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
-            android:name="com.anubhav.notedown.activities.AddEditNoteActivity"
+            android:name=".activities.AddEditNoteActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
-            android:name="com.anubhav.notedown.activities.FavoriteNotesActivity"
+            android:name=".activities.FavoriteNotesActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
-            android:name="com.anubhav.notedown.activities.SettingsActivity"
+            android:name=".activities.SettingsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/PreferenceTheme"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
